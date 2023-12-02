@@ -1,41 +1,62 @@
-use std::io;
-use std::net::SocketAddr;
-use futures_util::{SinkExt, StreamExt};
-use tokio::net::{TcpListener, TcpStream};
-use tokio_tungstenite::accept_async;
+use diesel::pg::PgConnection;
+use diesel::prelude::*;
+use dotenvy::dotenv;
+
+use rand::Rng;
+
+use std::env;
+
+pub mod user;
+use user::User;
+use user::CreateUser;
+
+
+pub mod schema;
+use schema::users;
+
+use self::schema::users::dsl::*;
+
+pub fn establish_connection() ->  PgConnection {
+    dotenv().ok();
+
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+   PgConnection::establish(&database_url)
+        .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+}
+
+pub fn show_users(connection : &mut PgConnection){
+
+    let results = users
+        .select(User::as_select())
+        .load(connection)
+        .expect("Error loading users");
+
+    println!("Displaying {} users", results.len());
+    for post in results {
+        println!("{}", post.id);
+        println!("{}", post.username);
+    }
+}
+
+
+
+pub fn create_user(connection: &mut PgConnection, user : &CreateUser) -> User {
+
+    diesel::insert_into(users::table)
+        .values(user)
+        .returning(User::as_returning())
+        .get_result(connection)
+        .expect("Error saving new post")
+}
 
 
 #[tokio::main]
-async fn main() -> io::Result<()> {
-    let addr: SocketAddr = "127.0.0.1:9000".parse().unwrap();
-    let listener = TcpListener::bind(addr).await?;
-    println!("Server running on: {}", addr);
+async fn main() {
 
-    while let Ok((stream, socket_addr)) = listener.accept().await {
-        println!("Connect accepted {}", socket_addr);
-        tokio::spawn(handel_connection(stream));
-    }
+    let connection = &mut establish_connection();
 
+    create_user(connection, &CreateUser { username: "root".to_string(), password: "1234".to_string() });
+    show_users(connection);
 
-    Ok(())
 }
 
-async fn handel_connection(stream: TcpStream) {
-    if let Ok(ws_stream) = accept_async(stream).await {
-        println!("WebSocket connection established");
-
-        let (mut write, mut read)
-            = ws_stream.split();
-
-        while let Some(Ok(msg)) = read.next().await {
-            if msg.is_text() || msg.is_binary() {
-                println!("Try to send {}", msg);
-                if write.send(msg).await.is_err() {
-                    break;
-                } else {}
-            }
-        }
-    }
-
-    println!("WebSocket connection closed");
-}
