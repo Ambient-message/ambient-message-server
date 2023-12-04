@@ -2,7 +2,7 @@ use std::rc::Rc;
 use crate::domain::user::user::User;
 use crate::domain::user::user_repository::UserRepository;
 
-use crate::application::requests::{
+use crate::application::users::requests::create_user_request::{
     CreateUserRequest
 };
 
@@ -13,11 +13,15 @@ pub struct CreateUserHandler {
 
 impl CreateUserHandler {
     pub fn new(user_repository: Rc<dyn UserRepository>) -> CreateUserHandler {
-        CreateUserHandler { clieuser_repositorynt_repository }
+        CreateUserHandler { user_repository }
     }
 
     pub fn execute(&self, request: CreateUserRequest) {
-        let user = CreateUser::new(
+
+        let id = 1;
+
+        let user = User::new(
+            id,
             request.username.as_str(),
             request.password.as_str(),
         );
