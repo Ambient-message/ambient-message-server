@@ -1,46 +1,11 @@
-use dotenvy::dotenv;
-use std::str::FromStr;
 use chrono::{DateTime, Utc};
-use std::time::{SystemTime, UNIX_EPOCH};
-use rand::Rng;
+use std::time::{SystemTime};
 use std::env;
 use std::net::{SocketAddr, IpAddr};
 use futures_util::{SinkExt, StreamExt};
 use tokio::net::{TcpListener, TcpStream};
 use tokio_tungstenite::accept_async;
 
-//
-//pub fn establish_connection() ->  PgConnection {
-//    dotenv().ok();
-//
-//    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-//   PgConnection::establish(&database_url)
-//        .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
-//}
-
-//pub fn show_users(connection : &mut PgConnection){
-//
-//    let results = users
-//        .select(User::as_select())
-//        .load(connection)
-//        .expect("Error loading users");
-//
-//    println!("Displaying {} users", results.len());
-//    for post in results {
-//        println!("{}", post.id);
-//        println!("{}", post.username);
-//    }
-//}
-
-
-//pub fn create_user(connection: &mut PgConnection, user : &CreateUser) -> User {
-//
-//    diesel::insert_into(users::table)
-//        .values(user)
-//        .returning(User::as_returning())
-//        .get_result(connection)
-//        .expect("Error saving new post")
-//}
 
 async fn handel_connection(stream: TcpStream) {
     if let Ok(ws_stream) = accept_async(stream).await {
