@@ -3,13 +3,11 @@ use diesel::prelude::*;
 use dotenvy::dotenv;
 
 use rand::Rng;
-
 use std::env;
 
-pub mod user;
-use user::User;
-use user::CreateUser;
+mod domain;
 
+use domain::user::user::User;
 
 pub mod schema;
 use schema::users;
@@ -39,23 +37,24 @@ pub fn show_users(connection : &mut PgConnection){
 }
 
 
+//pub fn create_user(connection: &mut PgConnection, user : &CreateUser) -> User {
+//
+//    diesel::insert_into(users::table)
+//        .values(user)
+//        .returning(User::as_returning())
+//        .get_result(connection)
+//        .expect("Error saving new post")
+//}
 
-pub fn create_user(connection: &mut PgConnection, user : &CreateUser) -> User {
-
-    diesel::insert_into(users::table)
-        .values(user)
-        .returning(User::as_returning())
-        .get_result(connection)
-        .expect("Error saving new post")
-}
 
 
 #[tokio::main]
 async fn main() {
 
+
     let connection = &mut establish_connection();
 
-    create_user(connection, &CreateUser { username: "root".to_string(), password: "1234".to_string() });
+    //create_user(connection, &CreateUser { username: "root".to_string(), password: "1234".to_string() });
     show_users(connection);
 
 }
