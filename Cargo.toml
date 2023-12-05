@@ -25,4 +25,5 @@ chrono = { version = "0.4", features = ["serde"] }
 async-trait = "0.1.74"
 uuid = { version = "1.6.1", features = ["v4"] }
 r2d2 = "0.8.10"
+inject = "0.1.3"
 
