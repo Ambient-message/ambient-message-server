@@ -1,18 +1,18 @@
 use std::rc::Rc;
 use crate::domain::user::user::User;
-use crate::domain::user::user_repository::UserRepository;
+use crate::domain::user::user_repository_abstract::UserRepositoryAbstract;
 
 use crate::application::users::requests::create_user_request::{
     CreateUserRequest
 };
 
 pub struct CreateUserHandler {
-    user_repository: Rc<dyn UserRepository>,
+    user_repository: Rc<dyn UserRepositoryAbstract>,
 }
 
 
 impl CreateUserHandler {
-    pub fn new(user_repository: Rc<dyn UserRepository>) -> CreateUserHandler {
+    pub fn new(user_repository: Rc<dyn UserRepositoryAbstract>) -> CreateUserHandler {
         CreateUserHandler { user_repository }
     }
 

@@ -1,3 +1,7 @@
+mod domain;
+mod application;
+mod infrastructure;
+
 use chrono::{DateTime, Utc};
 use std::time::{SystemTime};
 use std::env;
@@ -5,6 +9,7 @@ use std::net::{SocketAddr, IpAddr};
 use futures_util::{SinkExt, StreamExt};
 use tokio::net::{TcpListener, TcpStream};
 use tokio_tungstenite::accept_async;
+use domain::request::request::Request;
 
 
 async fn handel_connection(stream: TcpStream) {
@@ -14,12 +19,28 @@ async fn handel_connection(stream: TcpStream) {
         let (mut write, mut read)
             = ws_stream.split();
 
-        while let Some(Ok(msg)) = read.next().await {
-            if msg.is_text() || msg.is_binary() {
-                println!("Try to send {}", msg);
+        while let Some(Ok(mut msg)) = read.next().await {
+            if msg.is_text() {
+                let data: Request = serde_json::from_str(msg.to_string().as_str()).expect("Invalid request");
+
+                match data {
+                    Request::AddUser(_) => {}
+                    Request::GetUser(id) => {
+                        let user_handler =
+                            application::users::requests::by_id_request::ByIdRequest::new(
+                                Box::new(infrastructure::repositories::user_repository::UserRepository {})
+                            );
+
+                        let user = user_handler.handler(id).unwrap();
+                        let v = serde_json::to_string(&user).unwrap();
+
+                        msg = tungstenite::Message::Text(v);
+                    }
+                }
+
                 if write.send(msg).await.is_err() {
                     break;
-                } else {}
+                }
             }
         }
     }
@@ -30,7 +51,6 @@ async fn handel_connection(stream: TcpStream) {
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-
     let environment_file;
     if let Ok(e) = env::var("ENV") {
         environment_file = format!(".env.{}", e);
@@ -40,14 +60,14 @@ async fn main() -> std::io::Result<()> {
 
     dotenvy::from_filename(environment_file).ok();
 
-    let host : IpAddr = env::var("SERVER_HOST").unwrap_or_else(|_| String::from("127.0.0.1")).parse().expect("Invalid IP address");
-    let port : u16 = env::var("SERVER_PORT").unwrap_or_else(|_| String::from("8080")).parse().expect("Invalid port number");
+    let host: IpAddr = env::var("SERVER_HOST").unwrap_or_else(|_| String::from("127.0.0.1")).parse().expect("Invalid IP address");
+    let port: u16 = env::var("SERVER_PORT").unwrap_or_else(|_| String::from("8080")).parse().expect("Invalid port number");
     let debug_mode = env::var("DEBUG_MODE").is_ok();
 
     let addr = SocketAddr::from((host, port));
     let listener = TcpListener::bind(addr).await?;
 
-    println!("Starting server on http://{}:{}/", addr.ip(), addr.port());
+    println!("Starting server on https://{}:{}/", addr.ip(), addr.port());
     println!("Debug mode: {}", debug_mode);
 
     let start_time = SystemTime::now();
