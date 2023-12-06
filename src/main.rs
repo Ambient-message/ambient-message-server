@@ -1,62 +1,38 @@
-use diesel::pg::PgConnection;
-use diesel::prelude::*;
-use dotenvy::dotenv;
-
-use rand::Rng;
-
+use ambient_message_server_lib::adapters::services::user_service::UserService;
+use ambient_message_server_lib::adapters::spi::db::db_connection::{DbConnection, DbContext, self};
+use ambient_message_server_lib::application::users::handlers::create_user_handler::CreateUserHandler;
+use ambient_message_server_lib::application::users::requests::create_user_request::CreateUserRequest;
+use ambient_message_server_lib::domain::user::user_repository_abstract::UserRepositoryAbstract;
+use ambient_message_server_lib::infrastructure::repositories::user_repository::UserRepository;
+use chrono::{DateTime, Utc};
+use futures_util::{SinkExt, StreamExt};
 use std::env;
-
-pub mod user;
-use user::User;
-use user::CreateUser;
-
-
-pub mod schema;
-use schema::users;
-
-use self::schema::users::dsl::*;
-
-pub fn establish_connection() ->  PgConnection {
-    dotenv().ok();
-
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-   PgConnection::establish(&database_url)
-        .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
-}
-
-pub fn show_users(connection : &mut PgConnection){
-
-    let results = users
-        .select(User::as_select())
-        .load(connection)
-        .expect("Error loading users");
-
-    println!("Displaying {} users", results.len());
-    for post in results {
-        println!("{}", post.id);
-        println!("{}", post.username);
-    }
-}
-
-
-
-pub fn create_user(connection: &mut PgConnection, user : &CreateUser) -> User {
-
-    diesel::insert_into(users::table)
-        .values(user)
-        .returning(User::as_returning())
-        .get_result(connection)
-        .expect("Error saving new post")
-}
+use std::net::{IpAddr, SocketAddr};
+use std::rc::Rc;
+use std::time::SystemTime;
+use tokio::net::{TcpListener, TcpStream};
+use tokio_tungstenite::accept_async;
+use uuid::Uuid;
+use std::sync::{Arc, Mutex};
+use di::*;
 
 
 #[tokio::main]
-async fn main() {
+async fn main() -> std::io::Result<()> {
 
-    let connection = &mut establish_connection();
+    let provider = ServiceCollection::new()
+      .add(DbConnection::inject(ServiceLifetime::Singleton))
+      .add(UserRepository::inject(ServiceLifetime::Transient))
+      .add(CreateUserHandler::inject(ServiceLifetime::Transient))
+      .add(UserService::inject(ServiceLifetime::Transient))
+      .build_provider()
+      .unwrap();
 
-    create_user(connection, &CreateUser { username: "root".to_string(), password: "1234".to_string() });
-    show_users(connection);
+    let mut service = provider.get_required::<UserService>();
 
+    service.save(CreateUserRequest::new("stas", "test"));
+
+
+
+    Ok(())
 }
-
