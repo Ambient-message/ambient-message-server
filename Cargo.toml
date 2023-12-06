@@ -26,4 +26,5 @@ async-trait = "0.1.74"
 uuid = { version = "1.6.1", features = ["v4"] }
 r2d2 = "0.8.10"
 more-di = "3.0.0"
+mediator = "0.2.2"
 
