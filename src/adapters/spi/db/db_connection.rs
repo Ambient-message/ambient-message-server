@@ -1,4 +1,3 @@
-use std::env;
 use di::{injectable};
 use diesel::{pg::PgConnection, r2d2::ConnectionManager};
 
