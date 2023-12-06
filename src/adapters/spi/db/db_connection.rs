@@ -1,8 +1,7 @@
 use std::env;
-
-use di::{injectable, inject};
+use di::{injectable};
 use diesel::{pg::PgConnection, r2d2::ConnectionManager};
-use dotenvy::dotenv;
+
 
 type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 

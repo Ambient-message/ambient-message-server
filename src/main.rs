@@ -33,18 +33,5 @@ async fn main() -> std::io::Result<()> {
     let instance = provider.get_required::<UserService>();
 
     instance.save(CreateUserRequest::new("root", "1234"));
-
-//    let provider = ServiceCollection::new()
-//      .add(DbConnection::inject(ServiceLifetime::Singleton))
-//      .add(UserRepository::inject(ServiceLifetime::Transient))
-//      .add(CreateUserHandler::inject(ServiceLifetime::Transient))
-//      .add(UserService::inject(ServiceLifetime::Transient))
-//      .build_provider()
-//      .unwrap();
-//
-//    let mut service = provider.get_required::<UserService>();
-//
-//    service.save(CreateUserRequest::new("stas", "test"));
-
     Ok(())
 }
