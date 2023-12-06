@@ -11,7 +11,6 @@ pub struct DbConnection {
     pub database_url: String,
 }
 
-
 pub trait DbContext {
     fn get_pool(&self) -> DbPool;
 }
@@ -19,8 +18,8 @@ pub trait DbContext {
 impl DbContext for DbConnection {
 
     fn get_pool(&self) -> DbPool {
-        let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-        let manager = ConnectionManager::<PgConnection>::new(database_url);
+
+        let manager = ConnectionManager::<PgConnection>::new("postgres://postgres:hiWGNPEmtNmtR4U@localhost/postgres");
 
         r2d2::Pool::new(manager).unwrap()
     }
