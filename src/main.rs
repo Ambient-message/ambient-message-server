@@ -1,3 +1,8 @@
+use ambient_message_server_lib::adapters::spi::db::db_connection::{DbConnection, DbContext, self};
+use ambient_message_server_lib::application::users::handlers::create_user_handler::CreateUserHandler;
+use ambient_message_server_lib::application::users::requests::create_user_request::CreateUserRequest;
+use ambient_message_server_lib::domain::user::user_repository_abstract::UserRepositoryAbstract;
+use ambient_message_server_lib::infrastructure::repositories::user_repository::UserRepository;
 use chrono::{DateTime, Utc};
 use futures_util::{SinkExt, StreamExt};
 use std::env;
@@ -8,53 +13,23 @@ use tokio::net::{TcpListener, TcpStream};
 use tokio_tungstenite::accept_async;
 use uuid::Uuid;
 use std::sync::{Arc, Mutex};
-use ::inject::*;
-
-
-struct MyService()
-
-impl MyService{
-    #[inject]
-    fn new() -> Self {
-        Self()
-    }
-
-    fn hehe(){
-        println!("hehe");
-    }
-}
-
-struct MyService2 {
-    myService : MyService
-}
-
-impl MyService2 {
-    #[inject]
-    fn new(myService: MyService) -> Self {
-        Self{
-            myService : myService
-        }
-    }
-
-    fn foo(&self){
-        MyService::hehe();
-    }
-
-}
-
-
+use di::*;
 
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
 
-   let myService = Box::new(MyService());
-   let container = container![
-        ref myService
-    ];
 
-   let instance = get!(&container, MyService2).unwrap();
-   instance.foo();
+    let provider = ServiceCollection::new()
+      .add(DbConnection::inject(ServiceLifetime::Singleton))
+      .add(UserRepository::inject(ServiceLifetime::Transient))
+      .add(CreateUserHandler::inject(ServiceLifetime::Transient))
+      .build_provider()
+      .unwrap();
+
+    let mut handler = provider.get_required::<CreateUserHandler>();
+
+    handler.execute(CreateUserRequest::new("vlad", "lox"));
 
     Ok(())
 }
