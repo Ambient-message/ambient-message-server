@@ -1,5 +1,4 @@
 use std::env;
-
 use di::{injectable, inject};
 use diesel::{pg::PgConnection, r2d2::ConnectionManager};
 use dotenvy::dotenv;
@@ -13,22 +12,27 @@ pub struct DbConnection {
 }
 
 
-pub trait DbContext {
-    fn get_pool(&self) -> DbPool;
-}
+// pub trait DbContext {
+//     fn get_pool(&self) -> DbPool;
+// }
 
-impl DbContext for DbConnection {
+// impl DbContext for DbConnection {
 
-    fn get_pool(&self) -> DbPool {
+//     fn get_pool(&self) -> DbPool {
 
-        let environment_file;
-        if let Ok(e) = env::var("ENV") {
-            environment_file = format!(".env.{}", e);
-        } else {
-            environment_file = String::from(".env");
-        }
+//         let environment_file;
+//         if let Ok(e) = env::var("ENV") {
+//             environment_file = format!(".env.{}", e);
+//         } else {
+//             environment_file = String::from(".env");
+//         }
 
-        dotenvy::from_filename(environment_file).ok();
+//         dotenvy::from_filename(environment_file).ok();
+      
+impl DbConnection {
+    pub fn get_pool(&self) -> DbPool {
+        let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+        let database = format!("{}/{}", database_url, &self.db_name);
 
         let manager = ConnectionManager::<PgConnection>::new(env::var("DATABASE_URL").expect("DATABASE_URL must be set"));
 

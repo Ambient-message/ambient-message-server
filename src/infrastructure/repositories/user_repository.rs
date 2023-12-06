@@ -22,7 +22,6 @@ impl UserRepository {
     }
 }
 
-
 impl UserRepositoryAbstract for UserRepository {
     fn save(&self, user : User) -> Result<User, Box<dyn Error>>{
 
@@ -41,7 +40,5 @@ impl UserRepositoryAbstract for UserRepository {
             },
             Err(e) => Err(Box::new(e))
         }
-
-
     }
 }
