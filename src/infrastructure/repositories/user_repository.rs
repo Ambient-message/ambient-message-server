@@ -1,29 +1,44 @@
-use crate::domain::user::{user_repository_abstract::UserRepositoryAbstract, user::User};
+use async_trait::async_trait;
+use di::injectable;
+use diesel::RunQueryDsl;
+use std::error::Error;
+use std::rc::Rc;
+use crate::adapters::spi::db::db_connection::*;
+use crate::adapters::spi::db::schema::users;
+use crate::domain::user::user::User;
+use crate::domain::user::user_repository_abstract::UserRepositoryAbstract;
+use crate::adapters::spi::db::{db_connection::DbConnection};
 
+#[injectable(UserRepositoryAbstract)]
+pub struct UserRepository {
+    pub db_context: Rc<dyn DbContext>,
+}
 
-pub struct UserRepository {}
+impl UserRepository {
+    pub fn new(db_context : Rc<dyn DbContext>) -> Self{
+        Self{
+            db_context : db_context,
+        }
+    }
+}
 
 impl UserRepositoryAbstract for UserRepository {
-    fn by_id(&self, id: i32) -> Result<User, String> {
-        Ok(User::new(id, "ddd", "ddd"))
-    }
+    fn save(&self, user : User) -> Result<User, Box<dyn Error>>{
 
-    fn save(&self, client: User) {
-        todo!()
-    }
+        let mut conn = self.db_context.get_pool().get().expect("couldn't get db connection from pool");
 
-    fn next_identity(&self) -> String {
-        todo!()
-    }
+        let result = diesel::insert_into(users::table)
+            .values(&user)
+            .get_result::<User>(&mut conn);
 
-    fn all(&self) -> Vec<User> {
-        //let conn = self.get_pool().get().expect("couldn't get db connection from pool");
-        todo!()
-//        let results = users.load::<User>(&conn);
-//
-//        match results {
-//            Ok(models) => Ok(models.into_iter().map(DogFactDbMapper::to_entity).collect::<Vec<User>>()),
-//            Err(e) => Err(Box::new(e)),
-//        }
+        match result {
+            Ok(user) => {
+
+                println!("user has been added");
+
+                Ok(user)
+            },
+            Err(e) => Err(Box::new(e))
+        }
     }
 }

@@ -1,11 +1,11 @@
 use crate::domain::user::user::User;
+use di::{inject, injectable};
 use mockall::predicate::*;
 use mockall::*;
+use async_trait::async_trait;
+use std::error::Error;
 
 #[automock]
 pub trait UserRepositoryAbstract {
-    fn by_id(&self, id: i32) -> Result<User, String>;
-    fn save(&self, client: User);
-    fn next_identity(&self) -> String;
-    fn all(&self) -> Vec<User>;
+    fn save(&self, user : User) -> Result<User, Box<dyn Error>>;
 }

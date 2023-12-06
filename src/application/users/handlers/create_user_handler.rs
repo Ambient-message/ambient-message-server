@@ -1,11 +1,15 @@
 use std::rc::Rc;
+
 use crate::domain::user::user::User;
 use crate::domain::user::user_repository_abstract::UserRepositoryAbstract;
+use di::*;
+use uuid::Uuid;
 
 use crate::application::users::requests::create_user_request::{
     CreateUserRequest
 };
 
+#[injectable]
 pub struct CreateUserHandler {
     user_repository: Rc<dyn UserRepositoryAbstract>,
 }
@@ -18,7 +22,7 @@ impl CreateUserHandler {
 
     pub fn execute(&self, request: CreateUserRequest) {
 
-        let id = 1;
+        let id = Uuid::new_v4();
 
         let user = User::new(
             id,
