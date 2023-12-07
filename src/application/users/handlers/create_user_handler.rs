@@ -1,10 +1,10 @@
+use std::fmt::Error;
 use crate::application::users::requests::create_user_request::CreateUserRequest;
 use crate::domain::user::user::User;
 use crate::domain::user::user_repository_abstract::UserRepositoryAbstract;
-use std::rc::Rc;
 use di::*;
 use uuid::Uuid;
-
+use std::rc::Rc;
 
 #[injectable]
 pub struct CreateUserHandler {
@@ -17,7 +17,7 @@ impl CreateUserHandler {
         CreateUserHandler { user_repository }
     }
 
-    pub fn execute(&self, request: CreateUserRequest) {
+    pub fn execute(&self, request: CreateUserRequest) -> Result<User, Error> {
         let id = Uuid::new_v4();
 
         let user = User::new(
@@ -26,6 +26,6 @@ impl CreateUserHandler {
             request.password.as_str(),
         );
 
-        self.user_repository.save(user).expect("User does`t saved");
+        Ok(self.user_repository.save(user).expect("User does`t saved"))
     }
 }

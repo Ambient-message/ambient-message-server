@@ -1,3 +1,4 @@
+use std::env;
 use di::{injectable};
 use diesel::{pg::PgConnection, r2d2::ConnectionManager};
 
@@ -17,8 +18,8 @@ pub trait DbContext {
 impl DbContext for DbConnection {
 
     fn get_pool(&self) -> DbPool {
-
-        let manager = ConnectionManager::<PgConnection>::new("postgres://postgres:hiWGNPEmtNmtR4U@localhost/postgres");
+        let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+        let manager = ConnectionManager::<PgConnection>::new(database_url);
 
         r2d2::Pool::new(manager).unwrap()
     }

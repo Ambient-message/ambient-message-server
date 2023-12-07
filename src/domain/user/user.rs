@@ -18,7 +18,7 @@ pub struct User {
 impl User {
     pub fn new(id : Uuid, username : &str, password : &str) -> Self{
         Self{
-            id : id,
+            id,
             username : username.to_string(),
             password : password.to_string()
         }

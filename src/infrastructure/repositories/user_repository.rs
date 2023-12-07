@@ -2,6 +2,7 @@ use di::injectable;
 use diesel::RunQueryDsl;
 use std::error::Error;
 use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 use crate::adapters::spi::db::db_connection::*;
 use crate::adapters::spi::db::schema::users;
 use crate::domain::user::user::User;
@@ -16,7 +17,7 @@ pub struct UserRepository {
 impl UserRepository {
     pub fn new(db_context : Rc<dyn DbContext>) -> Self{
         Self{
-            db_context : db_context,
+            db_context,
         }
     }
 }
