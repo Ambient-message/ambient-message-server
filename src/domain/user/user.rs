@@ -1,8 +1,10 @@
+
 use di::injectable;
 use diesel::{Queryable, Selectable, Insertable};
 use uuid::Uuid;
+use serde::*;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[derive(Queryable, Selectable, Insertable)]
 #[diesel(table_name = crate::adapters::spi::db::schema::users)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
