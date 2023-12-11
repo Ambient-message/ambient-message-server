@@ -11,7 +11,6 @@ impl ServiceBuilder {
     pub fn add_adapters(mut self) -> Self {
         self.services.add(UserService::inject(ServiceLifetime::Transient));
         self.services.add(DbConnection::inject(ServiceLifetime::Singleton));
-
         self
     }
   

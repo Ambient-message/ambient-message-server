@@ -23,12 +23,12 @@ use options::{*, ext::*};
 async fn main() -> std::io::Result<()> {
 
 
-    let config : Rc<dyn Configuration> =Rc::from(
-        DefaultConfigurationBuilder::new()
-            .add_json_file("appsettings.json")
-            .build()
-            .unwrap()
-            .as_config());
+    let config = Rc::from(DefaultConfigurationBuilder::new()
+        .add_json_file("appsettings.json")
+        .build()
+        .unwrap()
+        .as_config());
+
 
     let builder = ServiceBuilder::new();
 
@@ -38,12 +38,28 @@ async fn main() -> std::io::Result<()> {
     .add_application()
     .build()
     .apply_config_at::<DbConnectionOptions>(config, "data")
-    .build_provider().unwrap();
+    .validate(|options| !options.database_url.is_empty(), "Database URL is unset")
+    .build_provider()
+    .unwrap();
+    
+    let db = provider.get_required::<dyn DbContext>();
+
+    db.get_pool();
 
 
-    let service = provider.get_required::<UserService>();
-
-   service.save(CreateUserRequest::new("stas", "test"));
+//    let builder = ServiceBuilder::new();
+//
+//    let provider = builder
+//    .add_adapters(config)
+//    .add_infrastructure()
+//    .add_application()
+//    .build()
+//    .build_provider().unwrap();
+//
+//
+//    let service = provider.get_required::<UserService>();
+//
+//   service.save(CreateUserRequest::new("stas", "test"));
 
     Ok(())
 }
