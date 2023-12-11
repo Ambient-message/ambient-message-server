@@ -2,7 +2,7 @@
 use di::injectable;
 use diesel::{Queryable, Selectable, Insertable};
 use uuid::Uuid;
-use serde::{Deserialize, Serialize};
+use serde::*;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[derive(Queryable, Selectable, Insertable)]
