@@ -11,6 +11,6 @@ Cargo.lock
 .pdb
 
 # Ignored IDE's files
-idea
-vscode
-fleet
+idea/
+vscode/
+fleet/
