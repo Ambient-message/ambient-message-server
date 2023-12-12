@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use super::{services::{user_service::UserService, service_builder::ServiceBuilder}, spi::db::db_connection::{DbConnection, DbConnectionOptions}};
+use super::{services::{user_service::UserService, service_builder::ServiceBuilder}, spi::db::db_connection::{DbConnection, DbOptions}};
 use config::{*, ext::*};
 use options::{*, ext::*};
 use di::*;

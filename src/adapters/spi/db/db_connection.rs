@@ -8,25 +8,29 @@ use serde_json::*;
 
 type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
-#[derive(Deserialize, Default)]
-pub struct DbConnectionOptions {
+
+#[derive(Default, Deserialize)]
+pub struct DbOptions {
+    #[serde(alias = "DatabaseUrl")]
     pub database_url: String,
 }
 
-#[injectable(DbContext)]
+#[injectable]
 pub struct DbConnection {
-    options: Ref<dyn Options<DbConnectionOptions>>,
-}
-pub trait DbContext {
-    fn get_pool(&self) -> DbPool;
+    options: Ref<dyn Options<DbOptions>>,
 }
 
-impl DbContext for DbConnection {
-    fn get_pool(&self) -> DbPool {
+impl DbConnection {
+    pub fn database_url(&self) -> String {
+        self.options.value().database_url.clone()
+    }
+
+    pub fn get_pool(&self) -> DbPool {
 
         r2d2::Pool::new(
             ConnectionManager::<PgConnection>::new(
-                &self.options.value().database_url)
+                &self.options.value().database_url.clone())
         ).expect("Failed to create database pool")
     }
 }
+
