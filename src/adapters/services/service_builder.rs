@@ -1,4 +1,4 @@
-use di::{ServiceCollection, ServiceLifetime, Injectable};
+use di::{ServiceCollection};
 
 
 pub struct ServiceBuilder {

@@ -1,4 +1,4 @@
-use di::{ServiceCollection, ServiceLifetime, Injectable};
+use di::{ServiceLifetime, Injectable};
 
 use crate::adapters::services::service_builder::ServiceBuilder;
 
