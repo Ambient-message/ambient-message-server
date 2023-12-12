@@ -1,14 +1,5 @@
-use ambient_message_server_lib::adapters::spi::db::db_connection::{DbConnection, DbOptions};
-use chrono::{DateTime, Utc};
-use futures_util::{SinkExt, StreamExt};
-use std::env;
-use std::net::{IpAddr, SocketAddr};
-use std::rc::Rc;
-use std::time::SystemTime;
-use tokio::net::{TcpListener, TcpStream};
-use tokio_tungstenite::accept_async;
-use uuid::Uuid;
-use std::sync::{Arc, Mutex};
+use ambient_message_server_lib::adapters::spi::db::db_connection::{DbConnection, DbOptions, DbContext};
+
 use config::{*, ext::*};
 use di::*;
 use options::{*, ext::*};
@@ -37,7 +28,7 @@ async fn main() -> std::io::Result<()> {
         .build_provider()
         .unwrap();
 
-    let db = provider.get_required::<DbConnection>();
+    let db = provider.get_required::<dyn DbContext>();
     println!("Connecting to '{}'...", &db.database_url());
     &db.get_pool();
 

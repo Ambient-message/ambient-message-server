@@ -1,10 +1,10 @@
-use std::{default, rc::Rc};
-use config::ext::ConfigurationBinder;
+
+
 use di::{injectable, Ref};
 use diesel::{pg::PgConnection, r2d2::ConnectionManager};
 use options::Options;
 use serde::*;
-use serde_json::*;
+
 
 type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
@@ -15,17 +15,23 @@ pub struct DbOptions {
     pub database_url: String,
 }
 
-#[injectable]
+#[injectable(DbContext)]
 pub struct DbConnection {
     options: Ref<dyn Options<DbOptions>>,
 }
 
-impl DbConnection {
-    pub fn database_url(&self) -> String {
+pub trait DbContext {
+    fn get_pool(&self) -> DbPool;
+    fn database_url(&self) -> String;
+}
+
+
+impl DbContext for DbConnection {
+    fn database_url(&self) -> String {
         self.options.value().database_url.clone()
     }
 
-    pub fn get_pool(&self) -> DbPool {
+    fn get_pool(&self) -> DbPool {
 
         r2d2::Pool::new(
             ConnectionManager::<PgConnection>::new(

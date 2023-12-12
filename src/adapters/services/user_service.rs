@@ -1,8 +1,7 @@
 use std::rc::Rc;
 
-use crate::{domain::user::{user_repository_abstract::UserRepositoryAbstract, user::User},
-    application::users::{requests::create_user_request::CreateUserRequest,
-        handlers::create_user_handler::{self, CreateUserHandler}}, adapters::spi::db::schema::users::password};
+use crate::{application::users::{requests::create_user_request::CreateUserRequest,
+        handlers::create_user_handler::{CreateUserHandler}}};
 use di::injectable;
 
 

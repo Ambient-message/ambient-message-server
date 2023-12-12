@@ -1,10 +1,10 @@
 use di::injectable;
-use diesel::RunQueryDsl;
+
 use uuid::Uuid;
 use std::error::Error;
-use std::rc::Rc;
+
 use crate::adapters::spi::db::db_connection::*;
-use crate::adapters::spi::db::schema::users;
+
 use crate::domain::user::user::User;
 use crate::domain::user::user_repository_abstract::UserRepositoryAbstract;
 
@@ -19,9 +19,9 @@ impl UserRepository {
 }
 
 impl UserRepositoryAbstract for UserRepository {
-    fn save(&self, user : User) -> Result<User, Box<dyn Error>>{
+    fn save(&self, _user : User) -> Result<User, Box<dyn Error>>{
 
-        Ok((User::new(Uuid::new_v4(), "s", "sad")))
+        Ok(User::new(Uuid::new_v4(), "s", "sad"))
 //        let mut conn = self.db_context.get_pool().get().expect("couldn't get db connection from pool");
 //
 //        let result = diesel::insert_into(users::table)
