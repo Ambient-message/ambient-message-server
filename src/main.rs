@@ -1,3 +1,5 @@
+use infrastructure::cli::run;
+
 fn main() {
-    println!("Hello, world!");
+    run();
 }
