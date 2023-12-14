@@ -17,6 +17,6 @@ impl CreateUser {
 
     pub fn exec(&self, reg: Request) -> Result<Response, ()> {
         let user = User::new(1, reg.name);
-        Ok(Response {user})
+        Ok(Response { user })
     }
 }

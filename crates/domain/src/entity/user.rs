@@ -6,7 +6,8 @@ pub struct User {
 
 impl User {
     pub fn new<N>(id: i32, name: N) -> Self
-    where N: Into<String>
+    where
+        N: Into<String>,
     {
         Self {
             id,
