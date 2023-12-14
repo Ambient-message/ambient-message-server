@@ -1,1 +1,0 @@
-/home/administrator/self/Projects/ambient-message-server/crates/domain/target/debug/libdomain.rlib: /home/administrator/self/Projects/ambient-message-server/crates/domain/src/entities/mod.rs /home/administrator/self/Projects/ambient-message-server/crates/domain/src/entities/user.rs /home/administrator/self/Projects/ambient-message-server/crates/domain/src/lib.rs
