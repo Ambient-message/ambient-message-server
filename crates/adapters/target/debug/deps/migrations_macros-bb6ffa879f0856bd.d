@@ -1,0 +1,8 @@
+/home/administrator/self/Projects/ambient-message-server/crates/adapters/target/debug/deps/libmigrations_macros-bb6ffa879f0856bd.so: /home/administrator/.cargo/registry/src/index.crates.io-6f17d22bba15001f/migrations_macros-1.4.2/src/lib.rs /home/administrator/.cargo/registry/src/index.crates.io-6f17d22bba15001f/migrations_macros-1.4.2/src/embed_migrations.rs /home/administrator/.cargo/registry/src/index.crates.io-6f17d22bba15001f/migrations_macros-1.4.2/src/migrations.rs /home/administrator/.cargo/registry/src/index.crates.io-6f17d22bba15001f/migrations_macros-1.4.2/src/util.rs
+
+/home/administrator/self/Projects/ambient-message-server/crates/adapters/target/debug/deps/migrations_macros-bb6ffa879f0856bd.d: /home/administrator/.cargo/registry/src/index.crates.io-6f17d22bba15001f/migrations_macros-1.4.2/src/lib.rs /home/administrator/.cargo/registry/src/index.crates.io-6f17d22bba15001f/migrations_macros-1.4.2/src/embed_migrations.rs /home/administrator/.cargo/registry/src/index.crates.io-6f17d22bba15001f/migrations_macros-1.4.2/src/migrations.rs /home/administrator/.cargo/registry/src/index.crates.io-6f17d22bba15001f/migrations_macros-1.4.2/src/util.rs
+
+/home/administrator/.cargo/registry/src/index.crates.io-6f17d22bba15001f/migrations_macros-1.4.2/src/lib.rs:
+/home/administrator/.cargo/registry/src/index.crates.io-6f17d22bba15001f/migrations_macros-1.4.2/src/embed_migrations.rs:
+/home/administrator/.cargo/registry/src/index.crates.io-6f17d22bba15001f/migrations_macros-1.4.2/src/migrations.rs:
+/home/administrator/.cargo/registry/src/index.crates.io-6f17d22bba15001f/migrations_macros-1.4.2/src/util.rs:
