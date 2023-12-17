@@ -2,8 +2,12 @@
 name = "application"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 
 [dependencies]
-uuid = { version = "1.6.1" , features = ["v4"]}
 domain = { path = "../domain" }
+
+# External dependencies
+uuid = { version = "1.6.1", features = ["v4"] }
+thiserror = "1.0.50"

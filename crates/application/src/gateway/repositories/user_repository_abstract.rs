@@ -1,6 +1,17 @@
 use domain::entities::user::User;
-use std::error::Error;
+use thiserror;
+use thiserror::Error;
 
-pub trait UserRepositoryAbstract {
-    fn save(&self, user: User) -> Result<User, Box<dyn Error>>;
+#[derive(Debug, Error)]
+pub enum SaveError {
+    #[error("Area of life repository connection problem")]
+    Connection,
+}
+
+pub struct Record {
+    pub user: User,
+}
+
+pub trait Repo {
+    fn save(&self, record: Record) -> Result<User, SaveError>;
 }

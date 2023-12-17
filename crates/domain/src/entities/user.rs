@@ -13,7 +13,7 @@ impl User {
         N: Into<String>,
     {
         Self {
-            id: id,
+            id,
             username: name.into(),
             password: password.into(),
         }

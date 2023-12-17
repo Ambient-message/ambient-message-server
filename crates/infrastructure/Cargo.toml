@@ -2,10 +2,11 @@
 name = "infrastructure"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 
 [dependencies]
-reqwest={version="0.11", features = ["json"]}
+reqwest = { version = "0.11", features = ["json"] }
 actix-web = "4.4.0"
 actix-http = "3.4.0"
 actix-rt = "2.7"
@@ -18,9 +19,13 @@ async-trait = "0.1"
 tokio = { version = "1.18", features = ["full"] }
 thiserror = "1.0"
 derive_more = "0.99"
+
+# External dependencies
 domain = { path = "../domain" }
 application = { path = "../application" }
 adapters = { path = "../adapters" }
+db = { path = "../db" }
+cli = {path = "../cli"}
 
 [dev-dependencies]
 cargo-tarpaulin = "0.20"
