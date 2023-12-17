@@ -3,23 +3,23 @@ use application::usecases::user::create::{CreateUser, Request};
 use domain::entities::user::User;
 
 pub struct Controller<'d, D>
-where
-    D: Repo,
+    where
+        D: Repo,
 {
     db: &'d D,
 }
 
 impl<'d, D> Controller<'d, D>
-where
-    D: Repo,
+    where
+        D: Repo,
 {
     pub fn new(db: &'d D) -> Self {
         Self { db }
     }
 
     pub fn create_user<T>(&self, username: T, password: T) -> User
-    where
-        T: Into<String>,
+        where
+            T: Into<String>,
     {
         let req = Request {
             username: username.into(),

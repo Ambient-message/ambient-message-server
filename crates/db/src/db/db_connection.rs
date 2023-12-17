@@ -1,10 +1,9 @@
-use diesel::{pg::PgConnection, r2d2, r2d2::ConnectionManager, prelude::*};
 use adapters::db::Db;
+use diesel::{pg::PgConnection, prelude::*, r2d2, r2d2::ConnectionManager};
 
 pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
-pub struct DbConnection {
-}
+pub struct DbConnection {}
 
 impl DbConnection {
     pub fn get_pool() -> DbPool {

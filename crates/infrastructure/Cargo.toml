@@ -25,7 +25,7 @@ domain = { path = "../domain" }
 application = { path = "../application" }
 adapters = { path = "../adapters" }
 db = { path = "../db" }
-cli = {path = "../cli"}
+cli = { path = "../cli" }
 
 [dev-dependencies]
 cargo-tarpaulin = "0.20"

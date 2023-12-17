@@ -1,10 +1,12 @@
-use super::db_mappers::UserDbMapper;
-use crate::db::db_connection::DbConnection;
-use crate::db::models::UserModel;
 use application::gateway::repositories::user_repository_abstract::{Record, Repo, SaveError};
 use application::mappers::db_mapper::DbMapper;
 use diesel::{RunQueryDsl, SelectableHelper};
 use domain::entities::user::User;
+
+use crate::db::db_connection::DbConnection;
+use crate::db::models::UserModel;
+
+use super::db_mappers::UserDbMapper;
 
 impl Repo for DbConnection {
     fn save(&self, record: Record) -> Result<User, SaveError> {

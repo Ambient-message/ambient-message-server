@@ -1,7 +1,8 @@
-use crate::gateway::repositories::user_repository_abstract::{Record, Repo, SaveError};
 use domain::entities::user::User;
 use thiserror::Error;
 use uuid::Uuid;
+
+use crate::gateway::repositories::user_repository_abstract::{Record, Repo, SaveError};
 
 pub struct Request {
     pub username: String,
@@ -27,15 +28,15 @@ impl From<SaveError> for Error {
 }
 
 pub struct CreateUser<'r, R>
-where
-    R: Repo,
+    where
+        R: Repo,
 {
     repo: &'r R,
 }
 
 impl<'r, R> CreateUser<'r, R>
-where
-    R: Repo,
+    where
+        R: Repo,
 {
     pub fn new(repo: &'r R) -> Self {
         Self { repo }
