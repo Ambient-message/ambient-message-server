@@ -15,12 +15,14 @@ impl Repo for DbConnection {
         let Record { user: new_user } = record;
         let model = UserDbMapper::to_model(new_user);
 
-        let res = diesel::insert_into(users::table)
+        let conn = &mut self.db_pool.get().unwrap();
+
+        let user = diesel::insert_into(users::table)
             .values(&model)
             .returning(UserModel::as_returning())
-            .get_result(&mut DbConnection::establish_connection())
+            .get_result(conn)
             .expect("Error saving new user");
 
-        Ok(UserDbMapper::to_entity(res))
+        Ok(UserDbMapper::to_entity(user))
     }
 }
