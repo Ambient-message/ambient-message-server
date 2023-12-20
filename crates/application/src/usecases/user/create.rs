@@ -1,51 +1,42 @@
-use domain::entities::user::User;
-use thiserror::Error;
-use uuid::Uuid;
+use async_trait::async_trait;
+use domain::error::ApiError;
+use domain::user::User;
 
-use crate::gateway::repositories::user_repository_abstract::{Record, Repo, SaveError};
-
-pub struct Request {
-    pub username: String,
-    pub password: String,
-}
-
-pub struct Response {
-    pub user: User,
-}
-
-#[derive(Debug, Error)]
-pub enum Error {
-    #[error("{}", SaveError::Connection)]
-    Repo,
-}
-
-impl From<SaveError> for Error {
-    fn from(e: SaveError) -> Self {
-        match e {
-            SaveError::Connection => Self::Repo,
-        }
-    }
-}
+use crate::repositories::user_repository_abstract::UserRepositoryAbstract;
+use crate::usecases::user::interfaces::AbstractUseCase;
 
 pub struct CreateUser<'r, R>
     where
-        R: Repo,
+        R: UserRepositoryAbstract,
 {
-    repo: &'r R,
+    user: User,
+    repository: &'r R,
 }
 
 impl<'r, R> CreateUser<'r, R>
     where
-        R: Repo,
+        R: UserRepositoryAbstract,
 {
-    pub fn new(repo: &'r R) -> Self {
-        Self { repo }
+    pub fn new(user: User, repository: &'r R) -> Self {
+        Self { user, repository }
     }
+}
 
-    pub fn exec(&self, req: Request) -> Result<Response, Error> {
-        let user = User::new(Uuid::new_v4(), req.username, req.password);
-        let rep = Record { user: user.clone() };
-        let _ = self.repo.save(rep);
-        Ok(Response { user })
+#[async_trait(? Send)]
+impl<'r, R> AbstractUseCase<User> for CreateUser<'r, R>
+    where
+        R: UserRepositoryAbstract
+{
+    async fn execute(&self) -> Result<User, ApiError> {
+        let user = self.repository.save(&self.user);
+
+        match user {
+            Ok(user) => Ok(user),
+            Err(e) => Err(ApiError {
+                code: 400,
+                message: String::from("Cannot create user"),
+                error: e,
+            }),
+        }
     }
 }

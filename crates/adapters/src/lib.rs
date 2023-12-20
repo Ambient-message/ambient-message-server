@@ -1,3 +1,2 @@
-pub mod controller;
 pub mod api;
-pub mod db;
+pub mod spi;

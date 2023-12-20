@@ -8,6 +8,4 @@ publish = false
 [dependencies]
 domain = { path = "../domain" }
 
-# External dependencies
-uuid = { version = "1.6.1", features = ["v4"] }
-thiserror = "1.0.50"
+async-trait = "0.1.74"
