@@ -9,11 +9,11 @@ pub struct User {
 
 impl User {
     pub fn new<N>(id: Uuid, name: N, password: N) -> Self
-    where
-        N: Into<String>,
+        where
+            N: Into<String>,
     {
         Self {
-            id: id,
+            id,
             username: name.into(),
             password: password.into(),
         }

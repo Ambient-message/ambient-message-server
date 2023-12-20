@@ -1,4 +1,3 @@
-pub mod gateway;
 pub mod usecases;
-pub mod utils;
+pub mod repositories;
 pub mod mappers;

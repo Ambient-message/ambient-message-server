@@ -3,10 +3,16 @@ name = "ambient-message-server"
 version = "0.1.0"
 edition = "2021"
 
+[workspace]
+members = [
+    "crates/domain",
+    "crates/application",
+    "crates/adapters",
+    "crates/infrastructure",
+]
 
 [dependencies]
-actix-web = "4.4.0"
-actix-http = "3.4.0"
-actix-rt = "2.7"
-
 infrastructure = { path = "crates/infrastructure" }
+
+actix-web = "4.4.0"
+dotenv = "0.15.0"

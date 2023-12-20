@@ -2,8 +2,10 @@
 name = "application"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 
 [dependencies]
-uuid = { version = "1.6.1" , features = ["v4"]}
 domain = { path = "../domain" }
+
+async-trait = "0.1.74"

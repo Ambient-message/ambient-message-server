@@ -2,13 +2,17 @@
 name = "adapters"
 version = "0.1.0"
 edition = "2021"
-
+publish = false
 
 [dependencies]
-diesel = { version = "2.1.4", features = ["postgres", "r2d2", "uuid"] }
-diesel_migrations = "1.4"
-dotenv = "0.15"
-r2d2 = "0.8"
-uuid = { version = "1.0", features = ["serde", "v4"] }
 domain = { path = "../domain" }
 application = { path = "../application" }
+
+actix-web = "4.4.0"
+diesel = { version = "2.1.4", features = ["postgres", "r2d2", "uuid"] }
+diesel_migrations = "2.1.0"
+dotenv = "0.15"
+uuid = "1.6.1"
+thiserror = "1.0.51"
+derive_more = { version = "0.99.17", features = ["display"]}
+serde = { version = "1.0.193", features = ["derive"] }

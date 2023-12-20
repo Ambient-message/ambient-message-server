@@ -1,12 +1,11 @@
-use super::models::UserModel;
 use application::mappers::db_mapper::DbMapper;
-use domain::entities::user::User;
+use domain::user::User;
+use crate::spi::models::UserModel;
 
 pub struct UserDbMapper {}
 
 impl DbMapper<User, UserModel> for UserDbMapper {
-    
-    fn to_model(entity: User) -> UserModel {
+    fn to_db(entity: User) -> UserModel {
         UserModel {
             id: entity.id,
             username: entity.username,
