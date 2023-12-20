@@ -3,6 +3,13 @@ name = "ambient-message-server"
 version = "0.1.0"
 edition = "2021"
 
+[workspace]
+members = [
+    "crates/domain",
+    "crates/application",
+    "crates/adapters",
+    "crates/infrastructure",
+]
 
 [dependencies]
 infrastructure = { path = "crates/infrastructure" }

@@ -1,9 +1,9 @@
-use diesel::{QueryableByName, Queryable, Insertable, Selectable};
+use diesel::{Identifiable, Insertable, Queryable, Selectable};
 use uuid::Uuid;
 
-use crate::spi::schema::*;
+use crate::spi::schema::users;
 
-#[derive(Insertable, Selectable, Queryable, QueryableByName)]
+#[derive(Debug, Insertable, Queryable, Identifiable, Selectable)]
 #[diesel(table_name = users)]
 pub struct UserModel {
     pub id: Uuid,

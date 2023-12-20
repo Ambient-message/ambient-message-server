@@ -1,4 +1,4 @@
-use std::fmt::{Debug, Display, Formatter};
+use std::fmt::{Debug};
 use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
 use domain::error::ApiError;

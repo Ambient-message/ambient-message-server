@@ -5,7 +5,7 @@ use domain::user::User;
 use crate::repositories::user_repository_abstract::UserRepositoryAbstract;
 use crate::usecases::user::interfaces::AbstractUseCase;
 
-pub struct CreateUser<'r, R>
+pub struct CreateUserUseCase<'r, R>
     where
         R: UserRepositoryAbstract,
 {
@@ -13,7 +13,7 @@ pub struct CreateUser<'r, R>
     repository: &'r R,
 }
 
-impl<'r, R> CreateUser<'r, R>
+impl<'r, R> CreateUserUseCase<'r, R>
     where
         R: UserRepositoryAbstract,
 {
@@ -23,15 +23,15 @@ impl<'r, R> CreateUser<'r, R>
 }
 
 #[async_trait(? Send)]
-impl<'r, R> AbstractUseCase<User> for CreateUser<'r, R>
+impl<'r, R> AbstractUseCase<()> for CreateUserUseCase<'r, R>
     where
         R: UserRepositoryAbstract
 {
-    async fn execute(&self) -> Result<User, ApiError> {
+    async fn execute(&self) -> Result<(), ApiError> {
         let user = self.repository.save(&self.user);
 
         match user {
-            Ok(user) => Ok(user),
+            Ok(_) => Ok(()),
             Err(e) => Err(ApiError {
                 code: 400,
                 message: String::from("Cannot create user"),

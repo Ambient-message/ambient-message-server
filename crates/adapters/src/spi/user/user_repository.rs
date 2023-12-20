@@ -1,12 +1,11 @@
 use std::error::Error;
 
+use diesel::prelude::*;
+
 use application::mappers::db_mapper::DbMapper;
 use application::repositories::user_repository_abstract::UserRepositoryAbstract;
-use diesel::insert_into;
-use diesel::prelude::*;
 use domain::user::User;
 
-use crate::spi::models::UserModel;
 use crate::spi::schema::users::dsl::users;
 use crate::spi::user::db_connection::DbConnection;
 use crate::spi::user::db_mappers::UserDbMapper;
@@ -16,21 +15,19 @@ pub struct UserRepository {
 }
 
 impl UserRepositoryAbstract for UserRepository{
-    fn save(&self, user: &User) -> Result<User, Box<dyn Error>> {
+    fn save(&self, user: &User) -> Result<(), Box<dyn Error>> {
         let mut conn =
-            self.db_connection.get_pool().get().expect("couldn't get db connection from pool");
+            self.db_connection.get_pool().get().expect("Couldn't connect to database");
 
         let user_model = UserDbMapper::to_db(user.clone());
 
-        let result = insert_into(users)
+        let result = diesel::insert_into(users)
             .values(user_model)
-            .returning(UserModel::as_returning())
-            .get_result(&mut conn);
+            .execute(&mut conn);
 
         match result {
-            Ok(model) =>{
-                let user =  UserDbMapper::to_entity(model);
-                Ok(user)
+            Ok(_) =>{
+                Ok(())
             },
             Err(e) => Err(Box::new(e)),
         }
