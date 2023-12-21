@@ -1,6 +1,7 @@
 use async_trait::async_trait;
+
 use domain::error::ApiError;
-use domain::user::User;
+use domain::user_entity::UserEntity;
 
 use crate::repositories::user_repository_abstract::UserRepositoryAbstract;
 use crate::usecases::user::interfaces::AbstractUseCase;
@@ -9,7 +10,7 @@ pub struct CreateUserUseCase<'r, R>
     where
         R: UserRepositoryAbstract,
 {
-    user: User,
+    user: UserEntity,
     repository: &'r R,
 }
 
@@ -17,7 +18,7 @@ impl<'r, R> CreateUserUseCase<'r, R>
     where
         R: UserRepositoryAbstract,
 {
-    pub fn new(user: User, repository: &'r R) -> Self {
+    pub fn new(user: UserEntity, repository: &'r R) -> Self {
         Self { user, repository }
     }
 }

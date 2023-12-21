@@ -1,16 +1,18 @@
-use std::fmt::{Debug};
-use actix_web::http::StatusCode;
+use std::fmt::Debug;
+
 use actix_web::{HttpResponse, ResponseError};
-use domain::error::ApiError;
-use thiserror::Error;
+use actix_web::http::StatusCode;
 use derive_more::Display;
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
+
+use domain::error::ApiError;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct ErrorPresenter {
     code: u16,
     message: String,
-    error: String
+    error: String,
 }
 
 #[derive(Error, Debug, Display)]

@@ -1,6 +1,7 @@
 use std::error::Error;
-use domain::user::User;
+
+use domain::user_entity::UserEntity;
 
 pub trait UserRepositoryAbstract {
-    fn save(&self, user: &User) -> Result<(), Box<dyn Error>>;
+    fn save(&self, user: &UserEntity) -> Result<(), Box<dyn Error>>;
 }

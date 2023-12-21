@@ -1,6 +1,8 @@
 use std::env;
 use std::net::TcpListener;
-use actix_web::{web, dev::Server, HttpServer, App};
+
+use actix_web::{App, dev::Server, HttpServer, web};
+
 use adapters::api::shared::app_state::AppState;
 use adapters::spi::user::db_connection::DbConnection;
 use adapters::spi::user::user_repository::UserRepository;

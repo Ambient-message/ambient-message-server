@@ -1,9 +1,7 @@
-use uuid::Uuid;
+use serde::{Deserialize, Serialize};
 
-
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct UserPayload {
-    pub id: Uuid,
     pub username: String,
     pub password: String,
 }

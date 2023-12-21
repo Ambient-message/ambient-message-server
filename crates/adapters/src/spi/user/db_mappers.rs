@@ -1,11 +1,12 @@
 use application::mappers::db_mapper::DbMapper;
-use domain::user::User;
+use domain::user_entity::UserEntity;
+
 use crate::spi::models::UserModel;
 
 pub struct UserDbMapper {}
 
-impl DbMapper<User, UserModel> for UserDbMapper {
-    fn to_db(entity: User) -> UserModel {
+impl DbMapper<UserEntity, UserModel> for UserDbMapper {
+    fn to_db(entity: UserEntity) -> UserModel {
         UserModel {
             id: entity.id,
             username: entity.username,
@@ -13,8 +14,8 @@ impl DbMapper<User, UserModel> for UserDbMapper {
         }
     }
 
-    fn to_entity(model: UserModel) -> User {
-        User {
+    fn to_entity(model: UserModel) -> UserEntity {
+        UserEntity {
             id: model.id,
             username: model.username,
             password: model.password,

@@ -4,7 +4,7 @@ use diesel::prelude::*;
 
 use application::mappers::db_mapper::DbMapper;
 use application::repositories::user_repository_abstract::UserRepositoryAbstract;
-use domain::user::User;
+use domain::user_entity::UserEntity;
 
 use crate::spi::schema::users::dsl::users;
 use crate::spi::user::db_connection::DbConnection;
@@ -14,8 +14,8 @@ pub struct UserRepository {
     pub db_connection: DbConnection,
 }
 
-impl UserRepositoryAbstract for UserRepository{
-    fn save(&self, user: &User) -> Result<(), Box<dyn Error>> {
+impl UserRepositoryAbstract for UserRepository {
+    fn save(&self, user: &UserEntity) -> Result<(), Box<dyn Error>> {
         let mut conn =
             self.db_connection.get_pool().get().expect("Couldn't connect to database");
 
@@ -26,9 +26,9 @@ impl UserRepositoryAbstract for UserRepository{
             .execute(&mut conn);
 
         match result {
-            Ok(_) =>{
+            Ok(_) => {
                 Ok(())
-            },
+            }
             Err(e) => Err(Box::new(e)),
         }
     }
