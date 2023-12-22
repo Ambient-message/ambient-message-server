@@ -1,7 +1,7 @@
 use application::mappers::db_mapper::DbMapper;
 use domain::user_entity::UserEntity;
 
-use crate::spi::models::UserModel;
+use db::models::UserModel;
 
 pub struct UserDbMapper {}
 

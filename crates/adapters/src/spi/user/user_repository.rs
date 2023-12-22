@@ -6,8 +6,8 @@ use application::mappers::db_mapper::DbMapper;
 use application::repositories::user_repository_abstract::UserRepositoryAbstract;
 use domain::user_entity::UserEntity;
 
-use crate::spi::schema::users::dsl::users;
-use crate::spi::user::db_connection::DbConnection;
+use db::schema::users::dsl::users;
+use db::db_connection::DbConnection;
 use crate::spi::user::db_mappers::UserDbMapper;
 
 pub struct UserRepository {

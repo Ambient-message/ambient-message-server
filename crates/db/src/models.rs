@@ -1,7 +1,7 @@
 use diesel::{Identifiable, Insertable, Queryable, Selectable};
 use uuid::Uuid;
 
-use crate::spi::schema::users;
+use db::schema::users;
 
 #[derive(Debug, Insertable, Queryable, Identifiable, Selectable)]
 #[diesel(table_name = users)]
