@@ -1,6 +1,6 @@
-use std::{env, clone};
+use std::env;
 use std::net::TcpListener;
-use chrono::{Local, DateTime};
+use chrono::Local;
 use actix_web::dev::Server;
 
 #[actix_web::main]
