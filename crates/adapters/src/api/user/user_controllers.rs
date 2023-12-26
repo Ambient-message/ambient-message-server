@@ -13,9 +13,13 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
     cfg.service(create_user);
 }
 
-#[post("/")]
+#[post("/auth")]
 async fn create_user(data: web::Data<AppState>, info: web::Json<UserPayload>) -> Result<HttpResponse, ErrorReponse> {
+    
     let user = UserMapper::to_entity(info.0);
+
+    println!("{}", user.username);
+
     let create_user_usecase = CreateUserUseCase::new(user, &data.user_repository);
     let user = create_user_usecase.execute().await;
 

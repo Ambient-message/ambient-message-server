@@ -14,6 +14,7 @@ members = [
 
 [dependencies]
 infrastructure = { path = "crates/infrastructure" }
-
 actix-web = "4.4.0"
 dotenv = "0.15.0"
+actix-cors = "0.6.5"
+chrono = "0.4"
