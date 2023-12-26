@@ -9,5 +9,6 @@ publish = false
 domain = { path = "../domain" }
 application = { path = "../application" }
 adapters = { path = "../adapters" }
+db = { path = "../db" }
 
 actix-web = "4.4.0"
