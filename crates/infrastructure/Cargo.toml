@@ -2,8 +2,14 @@
 name = "infrastructure"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cli = { path = "../cli" }
+domain = { path = "../domain" }
+application = { path = "../application" }
+adapters = { path = "../adapters" }
+db = { path = "../db" }
+
+actix-web = "4.4.0"
+actix-cors = {version = "0.6.5", features = ["draft-private-network-access"]}

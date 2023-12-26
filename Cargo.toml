@@ -3,6 +3,18 @@ name = "ambient-message-server"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[workspace]
+members = [
+    "crates/domain",
+    "crates/application",
+    "crates/db",
+    "crates/adapters",
+    "crates/infrastructure",
+]
+
 [dependencies]
-infrastructure = {path = "crates/infrastructure"}
+infrastructure = { path = "crates/infrastructure" }
+actix-web = "4.4.0"
+dotenv = "0.15.0"
+actix-cors = "0.6.5"
+chrono = "0.4"
