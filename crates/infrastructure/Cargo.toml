@@ -9,5 +9,7 @@ publish = false
 domain = { path = "../domain" }
 application = { path = "../application" }
 adapters = { path = "../adapters" }
+db = { path = "../db" }
+
 actix-web = "4.4.0"
 actix-cors = {version = "0.6.5", features = ["draft-private-network-access"]}

@@ -6,8 +6,8 @@ use application::mappers::db_mapper::DbMapper;
 use application::repositories::user_repository_abstract::UserRepositoryAbstract;
 use domain::user_entity::UserEntity;
 
-use crate::spi::schema::users::dsl::users;
-use crate::spi::user::db_connection::DbConnection;
+use db::schema::users::dsl::users;
+use db::db_connection::DbConnection;
 use crate::spi::user::db_mappers::UserDbMapper;
 
 pub struct UserRepository {
@@ -17,7 +17,7 @@ pub struct UserRepository {
 impl UserRepositoryAbstract for UserRepository {
     fn save(&self, user: &UserEntity) -> Result<(), Box<dyn Error>> {
         let mut conn =
-            self.db_connection.get_pool().get().expect("Couldn't connect to database");
+            self.db_connection.db_pool.get().expect("Couldn't connect to database");
 
         let user_model = UserDbMapper::to_db(user.clone());
 
