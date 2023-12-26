@@ -15,7 +15,6 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
 
 #[post("/auth")]
 async fn create_user(data: web::Data<AppState>, info: web::Json<UserPayload>) -> Result<HttpResponse, ErrorReponse> {
-    
     let user = UserMapper::to_entity(info.0);
 
     println!("{}", user.username);

@@ -1,7 +1,6 @@
 use application::mappers::db_mapper::DbMapper;
-use domain::user_entity::UserEntity;
-
 use db::models::UserModel;
+use domain::user_entity::UserEntity;
 
 pub struct UserDbMapper {}
 

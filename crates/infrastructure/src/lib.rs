@@ -2,14 +2,13 @@ use std::env;
 use std::net::TcpListener;
 
 use actix_cors::Cors;
-use actix_web::{dev::Server, web, App, HttpServer};
+use actix_web::{App, dev::Server, HttpServer, web};
 
 use adapters::api::shared::app_state::AppState;
 use adapters::spi::user::user_repository::UserRepository;
 use db::db_connection::DbConnection;
 
 pub fn server(listener: TcpListener, db_name: &str, app_name: &str) -> Result<Server, std::io::Error> {
-
     env::set_var("RUST_BACKTRACE", "1");
     env::set_var("RUST_LOG", "actix_web=debug");
 
@@ -31,8 +30,8 @@ pub fn server(listener: TcpListener, db_name: &str, app_name: &str) -> Result<Se
             .app_data(data.clone())
             .configure(adapters::api::shared::routes::routes)
     })
-    .listen(listener)?
-    .run();
+        .listen(listener)?
+        .run();
 
     Ok(server)
 }
