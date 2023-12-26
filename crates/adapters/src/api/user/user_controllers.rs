@@ -2,7 +2,7 @@ use actix_web::{HttpResponse, post, web};
 
 use application::mappers::api_mapper::ApiMapper;
 use application::usecases::user::create::CreateUserUseCase;
-use application::usecases::user::interfaces::AbstractUseCase;
+use application::usecases::interfaces::AbstractUseCase;
 
 use crate::api::shared::app_state::AppState;
 use crate::api::shared::error_presenter::ErrorReponse;

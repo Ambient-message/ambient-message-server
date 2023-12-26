@@ -1,4 +1,5 @@
 use std::error::Error;
+use std::sync::Arc;
 
 use diesel::prelude::*;
 
@@ -8,16 +9,19 @@ use db::db_connection::DbConnection;
 use db::schema::users::dsl::users;
 use domain::user_entity::UserEntity;
 
-use crate::spi::user::db_mappers::UserDbMapper;
+use crate::spi::user::chat_db_mappers::UserDbMapper;
 
 pub struct UserRepository {
-    pub db_connection: DbConnection,
+    pub db_connection: Arc<DbConnection>,
 }
 
 impl UserRepositoryAbstract for UserRepository {
     fn save(&self, user: &UserEntity) -> Result<(), Box<dyn Error>> {
-        let mut conn =
-            self.db_connection.db_pool.get().expect("Couldn't connect to database");
+        let mut conn = self
+            .db_connection
+            .db_pool
+            .get()
+            .expect("Couldn't connect to database");
 
         let user_model = UserDbMapper::to_db(user.clone());
 
@@ -26,9 +30,7 @@ impl UserRepositoryAbstract for UserRepository {
             .execute(&mut conn);
 
         match result {
-            Ok(_) => {
-                Ok(())
-            }
+            Ok(_) => Ok(()),
             Err(e) => Err(Box::new(e)),
         }
     }

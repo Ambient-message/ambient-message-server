@@ -28,9 +28,9 @@ async fn main() -> std::io::Result<()> {
     println!("Database: {}", database_name);
     println!("Port: {}", port);
 
-    run(listener, &database_name, app_name)?.await
+    run(listener, app_name)?.await
 }
 
-pub fn run(listener: TcpListener, db_name: &str, app_name: &str) -> Result<Server, std::io::Error> {
-    infrastructure::server(listener, db_name, app_name)
+pub fn run(listener: TcpListener, app_name: &str) -> Result<Server, std::io::Error> {
+    infrastructure::server(listener, app_name)
 }

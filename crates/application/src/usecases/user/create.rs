@@ -4,7 +4,7 @@ use domain::error::ApiError;
 use domain::user_entity::UserEntity;
 
 use crate::repositories::user_repository_abstract::UserRepositoryAbstract;
-use crate::usecases::user::interfaces::AbstractUseCase;
+use crate::usecases::interfaces::AbstractUseCase;
 
 pub struct CreateUserUseCase<'r, R>
     where
@@ -29,9 +29,9 @@ impl<'r, R> AbstractUseCase<()> for CreateUserUseCase<'r, R>
         R: UserRepositoryAbstract
 {
     async fn execute(&self) -> Result<(), ApiError> {
-        let user = self.repository.save(&self.user);
+        let result = self.repository.save(&self.user);
 
-        match user {
+        match result {
             Ok(_) => Ok(()),
             Err(e) => Err(ApiError {
                 code: 400,
