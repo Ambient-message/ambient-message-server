@@ -2,6 +2,7 @@ use std::error::Error;
 use std::sync::Arc;
 
 use diesel::prelude::*;
+use uuid::Uuid;
 
 use application::mappers::db_mapper::DbMapper;
 use application::repositories::user_repository_abstract::UserRepositoryAbstract;
@@ -31,6 +32,24 @@ impl UserRepositoryAbstract for UserRepository {
 
         match result {
             Ok(_) => Ok(()),
+            Err(e) => Err(Box::new(e)),
+        }
+    }
+
+    fn find(&self, user_id: Uuid) -> Result<UserEntity, Box<dyn Error>> {
+        use diesel::prelude::*;
+
+        let mut conn = self
+            .db_connection
+            .db_pool
+            .get()
+            .expect("Couldn't connect to database");
+
+        let result = db::schema::users::table.find(user_id).first(&mut conn);
+
+
+        match result {
+            Ok(user) => Ok(UserDbMapper::to_entity(user)),
             Err(e) => Err(Box::new(e)),
         }
     }
