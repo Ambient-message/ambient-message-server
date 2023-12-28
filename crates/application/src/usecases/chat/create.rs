@@ -1,38 +1,59 @@
 use async_trait::async_trait;
+use uuid::Uuid;
 
 use domain::chat_entity::ChatEntity;
 use domain::error::ApiError;
+use domain::user_chat_entity::UserChatEntity;
 
 use crate::repositories::chat_repository_abstract::ChatRepositoryAbstract;
+use crate::repositories::userchat_repository_abstract::UserChatRepositoryAbstract;
 use crate::usecases::interfaces::AbstractUseCase;
 
-pub struct CreateChatUseCase<'r, R>
+pub struct CreateChatUseCase<'r, CR, UCR>
     where
-        R: ChatRepositoryAbstract,
+        CR: ChatRepositoryAbstract,
+        UCR: UserChatRepositoryAbstract,
 {
-    repository: &'r R,
+    user_id: Uuid,
+    chat_repository: &'r CR,
+    user_chat_repository: &'r UCR,
 }
 
-impl<'r, R> CreateChatUseCase<'r, R>
+impl<'r, CR, UCR> CreateChatUseCase<'r, CR, UCR>
     where
-        R: ChatRepositoryAbstract,
+        CR: ChatRepositoryAbstract,
+        UCR: UserChatRepositoryAbstract,
 {
-    pub fn new(repository: &'r R) -> Self {
-        Self { repository }
+    pub fn new(user_id: Uuid, chat_repository: &'r CR, user_chat_repository: &'r UCR) -> Self {
+        Self { user_id, chat_repository, user_chat_repository }
     }
 }
 
 #[async_trait(? Send)]
-impl<'r, R> AbstractUseCase<ChatEntity> for CreateChatUseCase<'r, R>
+impl<'r, CR, UCR> AbstractUseCase<()> for CreateChatUseCase<'r, CR, UCR>
     where
-        R: ChatRepositoryAbstract,
+        CR: ChatRepositoryAbstract,
+        UCR: UserChatRepositoryAbstract,
 {
-    async fn execute(&self) -> Result<ChatEntity, ApiError> {
+    async fn execute(&self) -> Result<(), ApiError> {
         let chat = ChatEntity::new();
-        let result = self.repository.save(chat);
+        let result = self.chat_repository.save(chat);
 
         match result {
-            Ok(chat) => Ok(chat),
+            Ok(chat) => {
+                let user_chat = UserChatEntity::new(self.user_id, chat.id);
+
+                let result = self.user_chat_repository.save(&user_chat);
+
+                match result {
+                    Ok(_) => Ok(()),
+                    Err(e) => Err(ApiError {
+                        code: 400,
+                        message: String::from("Cannot create user chat"),
+                        error: e,
+                    }),
+                }
+            }
             Err(e) => Err(ApiError {
                 code: 400,
                 message: String::from("Cannot create chat"),

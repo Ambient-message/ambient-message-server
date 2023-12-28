@@ -1,7 +1,9 @@
 use async_trait::async_trait;
 use uuid::Uuid;
+
 use domain::error::ApiError;
 use domain::user_entity::UserEntity;
+
 use crate::repositories::user_repository_abstract::UserRepositoryAbstract;
 use crate::usecases::interfaces::AbstractUseCase;
 

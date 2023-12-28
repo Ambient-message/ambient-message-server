@@ -31,7 +31,6 @@ async fn create_user(data: web::Data<AppState>, info: web::Json<UserPayload>) ->
 
 #[post("/user/profile")]
 async fn user_profile(data: web::Data<AppState>, info: web::Json<Uuid>) -> Result<HttpResponse, ErrorReponse> {
-
     let create_user_usecase = FindUserUseCase::new(info.0, &data.user_repository);
     let user = create_user_usecase.execute().await;
 

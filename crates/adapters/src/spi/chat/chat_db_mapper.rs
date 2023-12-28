@@ -8,14 +8,14 @@ impl DbMapper<ChatEntity, ChatModel> for ChatDbMapper {
     fn to_db(entity: ChatEntity) -> ChatModel {
         ChatModel {
             id: entity.id,
-            created: entity.created
+            created: entity.created,
         }
     }
 
     fn to_entity(model: ChatModel) -> ChatEntity {
         ChatEntity {
             id: model.id,
-            created: model.created
+            created: model.created,
         }
     }
 }

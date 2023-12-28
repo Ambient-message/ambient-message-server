@@ -1,6 +1,6 @@
+use chrono::{DateTime, Utc};
 use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 use uuid::Uuid;
-use chrono::{DateTime, Utc};
 
 use crate::schema::chats;
 use crate::schema::userchats;
