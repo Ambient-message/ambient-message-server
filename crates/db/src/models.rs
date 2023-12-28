@@ -1,9 +1,10 @@
 use diesel::{Associations, Identifiable, Insertable, Queryable, Selectable};
 use uuid::Uuid;
+use chrono::{DateTime, Utc};
 
-use crate::schema::users;
 use crate::schema::chats;
 use crate::schema::userchats;
+use crate::schema::users;
 
 #[derive(Debug, Insertable, Queryable, Identifiable, Selectable)]
 #[diesel(table_name = users)]
@@ -15,8 +16,9 @@ pub struct UserModel {
 
 #[derive(Debug, Insertable, Queryable, Identifiable, Selectable)]
 #[diesel(table_name = chats)]
-pub struct ChatModel{
-    pub id: Uuid
+pub struct ChatModel {
+    pub id: Uuid,
+    pub created: DateTime<Utc>,
 }
 
 #[derive(Debug, Insertable, Queryable, Identifiable, Selectable, Associations)]

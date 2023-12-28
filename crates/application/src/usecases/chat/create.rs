@@ -23,16 +23,16 @@ impl<'r, R> CreateChatUseCase<'r, R>
 }
 
 #[async_trait(? Send)]
-impl<'r, R> AbstractUseCase<()> for CreateChatUseCase<'r, R>
+impl<'r, R> AbstractUseCase<ChatEntity> for CreateChatUseCase<'r, R>
     where
         R: ChatRepositoryAbstract,
 {
-    async fn execute(&self) -> Result<(), ApiError> {
+    async fn execute(&self) -> Result<ChatEntity, ApiError> {
         let chat = ChatEntity::new();
         let result = self.repository.save(chat);
 
         match result {
-            Ok(_) => Ok(()),
+            Ok(chat) => Ok(chat),
             Err(e) => Err(ApiError {
                 code: 400,
                 message: String::from("Cannot create chat"),

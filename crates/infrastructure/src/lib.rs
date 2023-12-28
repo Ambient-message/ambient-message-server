@@ -3,11 +3,12 @@ use std::net::TcpListener;
 use std::sync::Arc;
 
 use actix_cors::Cors;
-use actix_web::{dev::Server, web, App, HttpServer};
+use actix_web::{App, dev::Server, HttpServer, web};
 
 use adapters::api::shared::app_state::AppState;
 use adapters::spi::chat::chat_repository::ChatRepository;
 use adapters::spi::user::user_repository::UserRepository;
+use adapters::spi::user_chat::user_chat_repository::UserChatRepository;
 use db::db_connection::DbConnection;
 
 pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::Error> {
@@ -20,6 +21,7 @@ pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::
         app_name: String::from(app_name),
         user_repository: UserRepository { db_connection: db_connection.clone() },
         chat_repository: ChatRepository { db_connection: db_connection.clone() },
+        user_chat_repository: UserChatRepository { db_connection: db_connection.clone() },
     });
 
     let server = HttpServer::new(move || {
@@ -33,8 +35,8 @@ pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::
             .app_data(data.clone())
             .configure(adapters::api::shared::routes::routes)
     })
-    .listen(listener)?
-    .run();
+        .listen(listener)?
+        .run();
 
     Ok(server)
 }

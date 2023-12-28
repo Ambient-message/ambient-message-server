@@ -3,6 +3,7 @@
 diesel::table! {
     chats (id) {
         id -> Uuid,
+        created -> Timestamptz,
     }
 }
 

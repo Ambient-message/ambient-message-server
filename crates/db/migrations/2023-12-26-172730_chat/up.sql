@@ -2,5 +2,6 @@
 CREATE TABLE IF NOT EXISTS chats
 (
     id uuid NOT NULL,
-    CONSTRAINT chats_pkey PRIMARY KEY(id)
+    created timestamptz NOT NULL,
+    CONSTRAINT chats_pkey PRIMARY KEY (id)
 )

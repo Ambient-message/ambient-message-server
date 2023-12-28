@@ -9,7 +9,7 @@ use db::db_connection::DbConnection;
 use db::schema::users::dsl::users;
 use domain::user_entity::UserEntity;
 
-use crate::spi::user::chat_db_mappers::UserDbMapper;
+use crate::spi::user::chat_db_mapper::UserDbMapper;
 
 pub struct UserRepository {
     pub db_connection: Arc<DbConnection>,

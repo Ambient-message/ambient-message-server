@@ -1,5 +1,6 @@
 use uuid::Uuid;
 
+#[derive(Debug, Clone)]
 pub struct UserChatEntity {
     pub id: Uuid,
     pub user_id: Uuid,
