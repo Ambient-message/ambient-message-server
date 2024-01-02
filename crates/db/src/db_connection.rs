@@ -12,6 +12,7 @@ impl DbConnection {
 
         let manager = ConnectionManager::<PgConnection>::new(&database_url);
 
+        //TODO Возвращать пул вместо одного соединения
         DbConnection {
             db_pool: r2d2::Pool::new(manager).unwrap(),
         }

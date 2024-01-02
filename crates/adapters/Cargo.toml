@@ -17,3 +17,4 @@ uuid = { version = "1.6.1", features = ["serde"] }
 thiserror = "1.0.51"
 derive_more = { version = "0.99.17", features = ["display"] }
 serde = { version = "1.0.193", features = ["derive"] }
+jsonwebtoken = "9.2.0"

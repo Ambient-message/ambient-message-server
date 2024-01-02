@@ -1,5 +1,9 @@
 use std::error::Error;
+use std::future::Ready;
 use std::sync::Arc;
+use actix_web::{FromRequest, HttpRequest};
+use actix_web::dev::Payload;
+use actix_web::web::Data;
 
 use diesel::prelude::*;
 use uuid::Uuid;
@@ -9,6 +13,7 @@ use application::repositories::user_repository_abstract::UserRepositoryAbstract;
 use db::db_connection::DbConnection;
 use db::schema::users::dsl::users;
 use domain::user_entity::UserEntity;
+use crate::api::shared::error_presenter::ErrorReponse;
 
 use crate::spi::user::chat_db_mapper::UserDbMapper;
 

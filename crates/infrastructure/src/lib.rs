@@ -11,6 +11,10 @@ use adapters::spi::user::user_repository::UserRepository;
 use adapters::spi::user_chat::user_chat_repository::UserChatRepository;
 use db::db_connection::DbConnection;
 
+use crate::services::crypto::CryptoService;
+
+pub mod services;
+
 pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::Error> {
     env::set_var("RUST_BACKTRACE", "1");
     env::set_var("RUST_LOG", "actix_web=debug");
@@ -33,6 +37,8 @@ pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::
                     .allowed_headers(vec!["Content-Type"]),
             )
             .app_data(data.clone())
+            //todo get from env
+            .app_data(CryptoService{jwt_secret: String::from("Bebra")})
             .configure(adapters::api::shared::routes::routes)
     })
         .listen(listener)?
