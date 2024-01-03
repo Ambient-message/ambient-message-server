@@ -14,6 +14,7 @@ impl ApiMapper<UserEntity, UserPresenter, UserPayload> for UserMapper {
         }
     }
 
+    //todo the user must be taken from the database
     fn to_entity(payload: UserPayload) -> UserEntity {
         UserEntity::new(payload.username, payload.password)
     }

@@ -1,9 +1,6 @@
 use std::error::Error;
-use std::future::Ready;
 use std::sync::Arc;
-use actix_web::{FromRequest, HttpRequest};
-use actix_web::dev::Payload;
-use actix_web::web::Data;
+use async_trait::async_trait;
 
 use diesel::prelude::*;
 use uuid::Uuid;
@@ -13,7 +10,6 @@ use application::repositories::user_repository_abstract::UserRepositoryAbstract;
 use db::db_connection::DbConnection;
 use db::schema::users::dsl::users;
 use domain::user_entity::UserEntity;
-use crate::api::shared::error_presenter::ErrorReponse;
 
 use crate::spi::user::chat_db_mapper::UserDbMapper;
 
@@ -21,8 +17,9 @@ pub struct UserRepository {
     pub db_connection: Arc<DbConnection>,
 }
 
+#[async_trait(?Send)]
 impl UserRepositoryAbstract for UserRepository {
-    fn save(&self, user: &UserEntity) -> Result<(), Box<dyn Error>> {
+    async fn save(&self, user: &UserEntity) -> Result<(), Box<dyn Error + Send>> {
         let mut conn = self
             .db_connection
             .db_pool
@@ -41,7 +38,7 @@ impl UserRepositoryAbstract for UserRepository {
         }
     }
 
-    fn find(&self, user_id: Uuid) -> Result<UserEntity, Box<dyn Error>> {
+    async fn find(&self, user_id: Uuid) -> Result<UserEntity, Box<dyn Error + Send>> {
         use diesel::prelude::*;
 
         let mut conn = self

@@ -18,3 +18,6 @@ thiserror = "1.0.51"
 derive_more = { version = "0.99.17", features = ["display"] }
 serde = { version = "1.0.193", features = ["derive"] }
 jsonwebtoken = "9.2.0"
+actix-web-httpauth = "0.8.1"
+log = "0.4.20"
+async-trait = "0.1.77"

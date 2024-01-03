@@ -38,7 +38,7 @@ pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::
             )
             .app_data(data.clone())
             //todo get from env
-            .app_data(CryptoService{jwt_secret: String::from("Bebra")})
+            .app_data(CryptoService { jwt_secret: String::from("Bebra").into() })
             .configure(adapters::api::shared::routes::routes)
     })
         .listen(listener)?

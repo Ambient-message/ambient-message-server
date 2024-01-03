@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use domain::error::ApiError;
+use domain::api_error::ApiError;
 use domain::user_entity::UserEntity;
 
 use crate::repositories::user_repository_abstract::UserRepositoryAbstract;
@@ -29,7 +29,7 @@ impl<'r, R> AbstractUseCase<()> for CreateUserUseCase<'r, R>
         R: UserRepositoryAbstract
 {
     async fn execute(&self) -> Result<(), ApiError> {
-        let result = self.repository.save(&self.user);
+        let result = self.repository.save(&self.user).await;
 
         match result {
             Ok(_) => Ok(()),

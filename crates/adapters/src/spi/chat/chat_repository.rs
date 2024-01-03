@@ -16,7 +16,7 @@ pub struct ChatRepository {
 }
 
 impl ChatRepositoryAbstract for ChatRepository {
-    fn save(&self, chat: ChatEntity) -> Result<ChatEntity, Box<dyn Error>> {
+    fn save(&self, chat: ChatEntity) -> Result<ChatEntity, Box<dyn Error + Send>> {
         let mut conn = self
             .db_connection
             .db_pool

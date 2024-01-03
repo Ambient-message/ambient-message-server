@@ -10,3 +10,6 @@ domain = { path = "../domain" }
 
 async-trait = "0.1.74"
 uuid = { version = "1.6.1", features = ["v4"] }
+actix-web-httpauth = "0.8.1"
+actix-web = "4.4.1"
+jsonwebtoken = "9.2.0"

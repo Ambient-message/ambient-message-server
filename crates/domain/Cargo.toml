@@ -5,5 +5,6 @@ edition = "2021"
 publish = false
 
 [dependencies]
-uuid = { version = "1.6.1", features = ["v4"] }
+uuid = { version = "1.6.1", features = ["v4", "serde"] }
 chrono = { version = "0.4.31", features = ["unstable-locales"] }
+serde = { version = "1.0.193", features = ["derive"] }

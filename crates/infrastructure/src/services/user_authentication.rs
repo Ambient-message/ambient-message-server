@@ -1,19 +1,20 @@
 use actix_web::{FromRequest, HttpRequest};
 use actix_web::dev::Payload;
-use actix_web::error::{ErrorNotAcceptable, HttpError};
+use actix_web::http::StatusCode;
 use actix_web::web::Data;
-use actix_web::web::JsonBody::Error;
-use actix_web_httpauth::extractors::bearer::{BearerAuth, Error};
+use actix_web_httpauth::extractors::bearer::BearerAuth;
 use futures::future::{BoxFuture, ready};
 use uuid::Uuid;
 
 use adapters::api::shared::app_state::AppState;
 use adapters::api::shared::error_presenter::ErrorReponse;
 use application::repositories::user_repository_abstract::UserRepositoryAbstract;
-use domain::error::ApiError;
+use application::services::crypto_service_abstract::CryptoServiceAbstract;
+use domain::api_error::ApiError;
 
 use crate::services::crypto::CryptoService;
 
+//todo not service
 pub struct AuthenticatedUser(pub Uuid);
 
 impl FromRequest for AuthenticatedUser {
@@ -36,26 +37,25 @@ impl FromRequest for AuthenticatedUser {
                             ErrorReponse::map_io_error(err)
                         })?;
 
-                    repository.user_repository.find(user_id).map_err(|e| {
-                        ErrorReponse::map_io_error(ApiError{
-                            code: 400,
-                            message: format!("Can't find {} user", user_id),
-                            error: e,
-                        })
-                    })?;
+                    repository.user_repository
+                        .find(user_id)
+                        .await
+                        .map_err(|e| {
+                            ErrorReponse::map_io_error(ApiError::new(401, "User dosh't ecxist".to_string(), e))
+                        })?;
 
                     Ok(AuthenticatedUser(user_id))
                 };
+
                 Box::pin(future)
             }
             _ => {
-                let error = ready(Err(ErrorReponse::map_io_error(ApiError{
-                    code: 400,
-                    message: format!("NOT_AUTHORIZED"),
-                    error: ,
-                }).into()));
+                let error = ready(Err(ErrorReponse::new(
+                    StatusCode::UNAUTHORIZED.into(),
+                    String::from("NOT AUTHORIZED"),
+                ).into()));
                 Box::pin(error)
             }
         }
-        }
+    }
 }

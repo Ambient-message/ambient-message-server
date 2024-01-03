@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use domain::error::ApiError;
+use domain::api_error::ApiError;
 
 #[async_trait(? Send)]
 pub trait AbstractUseCase<T> {

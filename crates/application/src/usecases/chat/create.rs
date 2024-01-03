@@ -2,7 +2,7 @@ use async_trait::async_trait;
 use uuid::Uuid;
 
 use domain::chat_entity::ChatEntity;
-use domain::error::ApiError;
+use domain::api_error::ApiError;
 use domain::user_chat_entity::UserChatEntity;
 
 use crate::repositories::chat_repository_abstract::ChatRepositoryAbstract;
