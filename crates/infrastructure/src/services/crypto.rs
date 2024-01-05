@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use actix_web::web::block;
 use bcrypt::{hash, verify};
 use chrono::{Duration, Utc};
@@ -47,12 +45,12 @@ impl CryptoServiceAbstract for CryptoService {
             };
             encode(&headers, &claims, &encoding_key).unwrap()
         })
-        .await
-        .map_err(|err| ApiError {
-            code: 400,
-            message: String::from("Can't creating jwt token").into(),
-            error: Box::new(err),
-        })
+            .await
+            .map_err(|err| ApiError {
+                code: 400,
+                message: String::from("Can't creating jwt token").into(),
+                error: Box::new(err),
+            })
     }
 
     async fn verify_jwt(&self, token: String) -> Result<TokenData<Claims>, ApiError> {
@@ -67,11 +65,11 @@ impl CryptoServiceAbstract for CryptoService {
             })
         })
             .await
-        .map_err(|err| ApiError {
-            code: 400,
-            message: String::from("Can't verifying jwt token").into(),
-            error: Box::new(err),
-        })
-        .and_then(|result| result)
+            .map_err(|err| ApiError {
+                code: 400,
+                message: String::from("Can't verifying jwt token").into(),
+                error: Box::new(err),
+            })
+            .and_then(|result| result)
     }
 }

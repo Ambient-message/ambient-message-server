@@ -8,6 +8,7 @@ pub struct ChatEntity {
 }
 
 impl ChatEntity {
+    //todo impl default
     pub fn new() -> Self
     {
         Self { id: Uuid::new_v4(), created: chrono::offset::Utc::now() }

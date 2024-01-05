@@ -29,19 +29,20 @@ impl FromRequest for AuthenticatedUser {
         match (bearer_result, repository_result, crypto_service_result) {
             (Ok(bearer), Ok(repository), Ok(crypto_service)) => {
                 let future = async move {
-                    let user_id = Uuid::new_v4();
-                    let r = crypto_service
+                    let user_id  = crypto_service
                         .verify_jwt(bearer.token().to_string())
-                        .await;
+                        .await
+                        .map(|data| data.claims.sub)
+                        .map_err(|err| {ErrorReponse::map_io_error(err)})?;
 
-                    // let r = repository.user_repository
-                    //     .find(user_id)
-                    //     .await
-                    //     .map_err(|e| {
-                    //         ErrorReponse::map_io_error(ApiError::new(401, "User dosh't ecxist".to_string(), e))
-                    //     })?;
+                    repository.user_repository
+                        .find(user_id)
+                        .await
+                        .map_err(|e| {
+                            ErrorReponse::map_io_error(ApiError::new(401, "User dosh't ecxist".to_string(), e))
+                        })?;
 
-                    Ok(AuthenticatedUser{ 0: user_id })
+                    Ok(AuthenticatedUser { 0: user_id })
                 };
 
                 Box::pin(future)

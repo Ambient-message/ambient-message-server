@@ -1,5 +1,4 @@
 use std::fmt::Debug;
-use std::ops::Deref;
 use std::sync::Arc;
 
 use actix_web::{HttpResponse, ResponseError};

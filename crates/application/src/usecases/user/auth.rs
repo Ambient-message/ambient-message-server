@@ -8,9 +8,9 @@ use crate::services::crypto_service_abstract::CryptoServiceAbstract;
 use crate::usecases::interfaces::AbstractUseCase;
 
 pub struct AuthUserUseCase<'a, R, C>
-where
-    R: UserRepositoryAbstract,
-    C: CryptoServiceAbstract,
+    where
+        R: UserRepositoryAbstract,
+        C: CryptoServiceAbstract,
 {
     basic: BasicAuth,
     repository: &'a R,
@@ -18,9 +18,9 @@ where
 }
 
 impl<'a, R, C> AuthUserUseCase<'a, R, C>
-where
-    R: UserRepositoryAbstract,
-    C: CryptoServiceAbstract,
+    where
+        R: UserRepositoryAbstract,
+        C: CryptoServiceAbstract,
 {
     pub fn new(basic: BasicAuth, repository: &'a R, hashing: &'a C) -> Self {
         Self {
@@ -32,9 +32,9 @@ where
 }
 
 impl<'a, R, C> AbstractUseCase<Option<String>> for AuthUserUseCase<'a, R, C>
-where
-    R: UserRepositoryAbstract,
-    C: CryptoServiceAbstract,
+    where
+        R: UserRepositoryAbstract,
+        C: CryptoServiceAbstract,
 {
     async fn execute(&self) -> Result<Option<String>, ApiError> {
         let user_id = match Uuid::parse_str(self.basic.user_id()) {
@@ -44,7 +44,7 @@ where
                     code: 401,
                     message: String::from("Invalid user id"),
                     error: Box::new(e),
-                })
+                });
             }
         };
 
@@ -60,7 +60,7 @@ where
                     code: 401,
                     message: String::from("User dosn't ecxist"),
                     error: e,
-                })
+                });
             }
         };
 

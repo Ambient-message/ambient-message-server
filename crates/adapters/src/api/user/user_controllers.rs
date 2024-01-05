@@ -44,7 +44,7 @@ async fn user_profile(data: web::Data<AppState>, info: web::Json<Uuid>) -> Resul
 }
 
 async fn auth(basic: BasicAuth, data: web::Data<AppState>, hashing: web::Data<impl CryptoServiceAbstract>)
-    -> Result<HttpResponse, ErrorReponse> {
+              -> Result<HttpResponse, ErrorReponse> {
     let auth_user_usecase = AuthUserUseCase::new(basic, &data.user_repository, hashing.get_ref());
     let token = auth_user_usecase.execute().await;
 

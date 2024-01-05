@@ -1,7 +1,7 @@
 use uuid::Uuid;
 
-use domain::chat_entity::ChatEntity;
 use domain::api_error::ApiError;
+use domain::chat_entity::ChatEntity;
 use domain::user_chat_entity::UserChatEntity;
 
 use crate::repositories::chat_repository_abstract::ChatRepositoryAbstract;
