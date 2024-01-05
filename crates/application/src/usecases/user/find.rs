@@ -1,4 +1,3 @@
-use async_trait::async_trait;
 use uuid::Uuid;
 
 use domain::api_error::ApiError;
@@ -24,7 +23,6 @@ impl<'r, R> FindUserUseCase<'r, R>
     }
 }
 
-#[async_trait(? Send)]
 impl<'r, R> AbstractUseCase<UserEntity> for FindUserUseCase<'r, R>
     where
         R: UserRepositoryAbstract

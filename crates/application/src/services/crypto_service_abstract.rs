@@ -1,11 +1,9 @@
-use async_trait::async_trait;
 use jsonwebtoken::TokenData;
 use uuid::Uuid;
 
 use domain::api_error::ApiError;
 use domain::claims::Claims;
 
-#[async_trait(? Send)]
 pub trait CryptoServiceAbstract {
     async fn hash_password(&self, password: String) -> Result<String, ApiError>;
     async fn verify_password(&self, password: &str, password_hash: &str) -> Result<bool, ApiError>;

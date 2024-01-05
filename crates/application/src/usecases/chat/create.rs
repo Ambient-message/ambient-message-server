@@ -1,4 +1,3 @@
-use async_trait::async_trait;
 use uuid::Uuid;
 
 use domain::chat_entity::ChatEntity;
@@ -29,7 +28,6 @@ impl<'r, CR, UCR> CreateChatUseCase<'r, CR, UCR>
     }
 }
 
-#[async_trait(? Send)]
 impl<'r, CR, UCR> AbstractUseCase<()> for CreateChatUseCase<'r, CR, UCR>
     where
         CR: ChatRepositoryAbstract,

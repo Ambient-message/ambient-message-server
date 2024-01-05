@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use actix_web::web::block;
-use async_trait::async_trait;
 use bcrypt::{hash, verify};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, DecodingKey, encode, EncodingKey, Header, TokenData, Validation};
@@ -12,10 +11,10 @@ use domain::api_error::ApiError;
 use domain::claims::Claims;
 
 pub struct CryptoService {
-    pub jwt_secret: Arc<String>,
+    pub jwt_secret: String,
 }
 
-#[async_trait(? Send)]
+
 impl CryptoServiceAbstract for CryptoService {
     //TODO make async
     async fn hash_password(&self, password: String) -> Result<String, ApiError> {
@@ -27,14 +26,10 @@ impl CryptoServiceAbstract for CryptoService {
     }
 
     //TODO make async
-    async fn verify_password(
-        &self,
-        password: &str,
-        password_hash: &str,
-    ) -> Result<bool, ApiError> {
+    async fn verify_password(&self, password: &str, password_hash: &str) -> Result<bool, ApiError> {
         verify(password, password_hash).map_err(|err| ApiError {
             code: 400,
-            message: String::from("Verifying error"),
+            message: String::from("Verifying error").into(),
             error: Box::new(err),
         })
     }
@@ -47,36 +42,36 @@ impl CryptoServiceAbstract for CryptoService {
             let encoding_key = EncodingKey::from_secret(jwt_key.as_bytes());
             let now = Utc::now() + Duration::days(1); // Expires in 1 day
             let claims = Claims {
-                sub: user_id,
+                sub: user_id.into(),
                 exp: now.timestamp(),
             };
             encode(&headers, &claims, &encoding_key).unwrap()
         })
-            .await
-            .map_err(|err| ApiError {
-                code: 400,
-                message: String::from("Can't creating jwt token"),
-                error: Box::new(err),
-            })
+        .await
+        .map_err(|err| ApiError {
+            code: 400,
+            message: String::from("Can't creating jwt token").into(),
+            error: Box::new(err),
+        })
     }
 
     async fn verify_jwt(&self, token: String) -> Result<TokenData<Claims>, ApiError> {
         let jwt_key = self.jwt_secret.clone();
-         block(move || {
+        block(move || {
             let decoding_key = DecodingKey::from_secret(jwt_key.as_bytes());
             let validation = Validation::default();
             decode::<Claims>(&token, &decoding_key, &validation).map_err(|err| ApiError {
                 code: 400,
-                message: String::from("Can't verifying jwt token"),
+                message: String::from("Can't verifying jwt token").into(),
                 error: Box::new(err),
             })
         })
             .await
-            .map_err(|err| ApiError {
-                code: 400,
-                message: String::from("Can't verifying jwt token"),
-                error: Box::new(err),
-            })
-             .and_then(|result| result)
+        .map_err(|err| ApiError {
+            code: 400,
+            message: String::from("Can't verifying jwt token").into(),
+            error: Box::new(err),
+        })
+        .and_then(|result| result)
     }
 }

@@ -1,6 +1,5 @@
 use std::error::Error;
 use std::sync::Arc;
-use async_trait::async_trait;
 
 use diesel::prelude::*;
 use uuid::Uuid;
@@ -17,7 +16,6 @@ pub struct UserRepository {
     pub db_connection: Arc<DbConnection>,
 }
 
-#[async_trait(?Send)]
 impl UserRepositoryAbstract for UserRepository {
     async fn save(&self, user: &UserEntity) -> Result<(), Box<dyn Error + Send>> {
         let mut conn = self

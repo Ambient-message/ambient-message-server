@@ -1,5 +1,4 @@
 use actix_web_httpauth::extractors::basic::BasicAuth;
-use async_trait::async_trait;
 use uuid::Uuid;
 
 use domain::api_error::ApiError;
@@ -32,7 +31,6 @@ where
     }
 }
 
-#[async_trait(? Send)]
 impl<'a, R, C> AbstractUseCase<Option<String>> for AuthUserUseCase<'a, R, C>
 where
     R: UserRepositoryAbstract,

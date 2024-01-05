@@ -1,5 +1,3 @@
-use async_trait::async_trait;
-
 use domain::api_error::ApiError;
 use domain::user_entity::UserEntity;
 
@@ -23,7 +21,6 @@ impl<'r, R> CreateUserUseCase<'r, R>
     }
 }
 
-#[async_trait(? Send)]
 impl<'r, R> AbstractUseCase<()> for CreateUserUseCase<'r, R>
     where
         R: UserRepositoryAbstract
