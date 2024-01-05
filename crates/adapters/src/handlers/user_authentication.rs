@@ -6,12 +6,11 @@ use actix_web_httpauth::extractors::bearer::BearerAuth;
 use futures::future::{BoxFuture, ready};
 use uuid::Uuid;
 
-use adapters::api::shared::app_state::AppState;
-use adapters::api::shared::error_presenter::ErrorReponse;
 use application::repositories::user_repository_abstract::UserRepositoryAbstract;
 use application::services::crypto_service_abstract::CryptoServiceAbstract;
 use domain::api_error::ApiError;
-
+use crate::api::shared::app_state::AppState;
+use crate::api::shared::error_presenter::ErrorReponse;
 use crate::services::crypto::CryptoService;
 
 //todo not service
@@ -24,7 +23,7 @@ impl FromRequest for AuthenticatedUser {
     fn from_request(req: &HttpRequest, payload: &mut Payload) -> Self::Future {
         let bearer_result = BearerAuth::from_request(req, payload).into_inner();
         let repository_result = Data::<AppState>::from_request(req, payload).into_inner();
-        let crypto_service_result = Data::<CryptoService>::from_request(req, payload).into_inner();
+            let crypto_service_result = Data::<CryptoService>::from_request(req, payload).into_inner();
 
         match (bearer_result, repository_result, crypto_service_result) {
             (Ok(bearer), Ok(repository), Ok(crypto_service)) => {

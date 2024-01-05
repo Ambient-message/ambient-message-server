@@ -11,21 +11,27 @@ use adapters::spi::user::user_repository::UserRepository;
 use adapters::spi::user_chat::user_chat_repository::UserChatRepository;
 use db::db_connection::DbConnection;
 
-use crate::services::crypto::CryptoService;
-
-pub mod services;
+use  adapters::services::crypto::CryptoService;
 
 pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::Error> {
+    //let database_url = dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     env::set_var("RUST_BACKTRACE", "1");
     env::set_var("RUST_LOG", "actix_web=debug");
 
-    let db_connection = Arc::new(DbConnection::new());
+    let db_connection = Arc::new(DbConnection::new(database_url));
 
     let data = web::Data::new(AppState {
         app_name: String::from(app_name),
-        user_repository: UserRepository { db_connection: db_connection.clone() },
-        chat_repository: ChatRepository { db_connection: db_connection.clone() },
-        user_chat_repository: UserChatRepository { db_connection: db_connection.clone() },
+        user_repository: UserRepository {
+            db_connection: db_connection.clone(),
+        },
+        chat_repository: ChatRepository {
+            db_connection: db_connection.clone(),
+        },
+        user_chat_repository: UserChatRepository {
+            db_connection: db_connection.clone(),
+        },
     });
 
     let server = HttpServer::new(move || {
@@ -38,11 +44,13 @@ pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::
             )
             .app_data(data.clone())
             //todo get from env
-            .app_data(CryptoService { jwt_secret: String::from("Bebra").into() })
+            .app_data(web::Data::new(CryptoService {
+                jwt_secret: String::from("Bebra").into(),
+            }))
             .configure(adapters::api::shared::routes::routes)
     })
-        .listen(listener)?
-        .run();
+    .listen(listener)?
+    .run();
 
     Ok(server)
 }

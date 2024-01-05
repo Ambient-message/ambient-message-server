@@ -18,14 +18,12 @@ async fn main() -> std::io::Result<()> {
     let address = String::from("127.0.0.1:8888");
 
     let listener = TcpListener::bind(address.clone()).expect("Failed to bind random port");
-    let database_name = dotenv::var("DATABASE_NAME").expect("DATABASE_NAME must be set");
     let port = listener.local_addr().unwrap().port();
     let app_name = "ambient-message-server";
 
     println!("[{}]", Local::now().format("%Y-%m-%d %H:%M:%S").to_string());
     println!("Server running on http://{}", address);
     println!("App Name: {}", app_name);
-    println!("Database: {}", database_name);
     println!("Port: {}", port);
 
     run(listener, app_name)?.await

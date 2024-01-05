@@ -7,9 +7,7 @@ pub struct DbConnection {
 }
 
 impl DbConnection {
-    pub fn new() -> Self {
-        let database_url = dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set");
-
+    pub fn new(database_url: String) -> Self {
         let manager = ConnectionManager::<PgConnection>::new(&database_url);
 
         //TODO Возвращать пул вместо одного соединения

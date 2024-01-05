@@ -25,11 +25,12 @@ impl CryptoServiceAbstract for CryptoService {
 
     //TODO make async
     async fn verify_password(&self, password: &str, password_hash: &str) -> Result<bool, ApiError> {
-        verify(password, password_hash).map_err(|err| ApiError {
-            code: 400,
-            message: String::from("Verifying error").into(),
-            error: Box::new(err),
-        })
+        Ok(password == password_hash)
+        // verify(password, password_hash).map_err(|err| ApiError {
+        //     code: 400,
+        //     message: String::from("Verifying error"),
+        //     error: Box::new(err),
+        // })
     }
 
     //TODO make async like this
@@ -60,7 +61,7 @@ impl CryptoServiceAbstract for CryptoService {
             let validation = Validation::default();
             decode::<Claims>(&token, &decoding_key, &validation).map_err(|err| ApiError {
                 code: 400,
-                message: String::from("Can't verifying jwt token").into(),
+                message: String::from("Can't verifying jwt token"),
                 error: Box::new(err),
             })
         })
