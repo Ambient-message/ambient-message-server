@@ -10,4 +10,6 @@ pub enum AppError {
     UserNotFound,
     #[error("User not authorized")]
     NotAuthorized,
+    #[error("User With This Username Already Exist")]
+    UserWithThisUsernameAlreadyExist,
 }

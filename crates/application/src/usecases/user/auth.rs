@@ -48,7 +48,12 @@ impl<'a, R, C> AbstractUseCase<String> for AuthUserUseCase<'a, R, C>
             AppError::EmptyPassword,
         ))?;
 
-        let user = self.repository.find_by_id(user_id).await?;
+        let user = self.repository.find_by_id(user_id).await?
+            .ok_or(ApiError::new(
+                StatusCode::BAD_REQUEST,
+                "User with this id doesn't not exist",
+                AppError::UserNotFound,
+            ))?;
 
         //todo perhaps the password should be hashed
         let valid = self

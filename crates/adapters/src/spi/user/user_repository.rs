@@ -41,7 +41,7 @@ impl UserRepositoryAbstract for UserRepository {
             })
     }
 
-    async fn find_by_id(&self, user_id: Uuid) -> Result<UserEntity, ApiError> {
+    async fn find_by_id(&self, user_id: Uuid) -> Result<Option<UserEntity>, ApiError> {
         use diesel::prelude::*;
 
         let mut conn = self
@@ -63,12 +63,35 @@ impl UserRepositoryAbstract for UserRepository {
             .map_err(|err| {
                 ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "Can't find user", err)
             })?
-            .ok_or(ApiError::new(
-                StatusCode::NOT_FOUND,
-                "Can't find user",
-                AppError::UserNotFound,
-            ))?;
+            .map(UserDbMapper::to_entity);
 
-        Ok(UserDbMapper::to_entity(result))
+        Ok(result)
+    }
+
+    async fn find_by_username(&self, username: impl Into<String>) -> Result<Option<UserEntity>, ApiError> {
+        use diesel::prelude::*;
+
+        let mut conn = self
+            .db_connection
+            .db_pool
+            .get()
+            .map_err(|err| {
+                ApiError::new(
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Couldn't connect to database",
+                    err,
+                )
+            })?;
+
+        let result = db::schema::users::table
+            .filter(db::schema::users::username.eq(username.into()))
+            .first(&mut conn)
+            .optional()
+            .map_err(|err| {
+                ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "Can't find user", err)
+            })?
+            .map(UserDbMapper::to_entity);
+
+        Ok(result)
     }
 }
