@@ -1,10 +1,13 @@
-use std::{error::Error, fmt};
+use std::fmt;
+
+use actix_web::http::StatusCode;
+use anyhow::Error;
 
 #[derive(Debug)]
 pub struct ApiError {
-    pub code: u16,
+    pub code: StatusCode,
     pub message: String,
-    pub error: Box<dyn Error + Send>,
+    pub error: Error,
 }
 
 impl fmt::Display for ApiError {
@@ -19,14 +22,14 @@ impl ApiError {
     }
 
     pub fn get_error_code(&self) -> u16 {
-        self.code
+        self.code.as_u16()
     }
 
-    pub fn new(code: u16, message: String, error: Box<dyn Error + Send>) -> Self {
+    pub fn new(code: StatusCode, message: impl Into<String>, error: impl Into<Error>) -> Self {
         Self {
             code,
-            message,
-            error,
+            message: message.into(),
+            error: error.into(),
         }
     }
 }

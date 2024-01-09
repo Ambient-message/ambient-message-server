@@ -1,12 +1,14 @@
-use std::error::Error;
 use std::sync::Arc;
 
+use actix_web::http::StatusCode;
+use anyhow::Result;
 use diesel::prelude::*;
 
 use application::mappers::db_mapper::DbMapper;
 use application::repositories::chat_repository_abstract::ChatRepositoryAbstract;
 use db::db_connection::DbConnection;
 use db::models::ChatModel;
+use domain::api_error::ApiError;
 use domain::chat_entity::ChatEntity;
 
 use crate::spi::chat::chat_db_mapper::ChatDbMapper;
@@ -16,7 +18,7 @@ pub struct ChatRepository {
 }
 
 impl ChatRepositoryAbstract for ChatRepository {
-    fn save(&self, chat: ChatEntity) -> Result<ChatEntity, Box<dyn Error + Send>> {
+    fn save(&self, chat: ChatEntity) -> Result<ChatEntity, ApiError> {
         let mut conn = self
             .db_connection
             .db_pool
@@ -28,11 +30,11 @@ impl ChatRepositoryAbstract for ChatRepository {
         let result = diesel::insert_into(db::schema::chats::table)
             .values(chat_model)
             .returning(ChatModel::as_returning())
-            .get_result(&mut conn);
+            .get_result(&mut conn)
+            .map_err(|err| {
+                ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "Can't insert chat", err)
+            })?;
 
-        match result {
-            Ok(chat) => Ok(ChatDbMapper::to_entity(chat)),
-            Err(e) => Err(Box::new(e)),
-        }
+        Ok(ChatDbMapper::to_entity(result))
     }
 }

@@ -1,3 +1,4 @@
+use actix_web::http::StatusCode;
 use actix_web_httpauth::extractors::basic::BasicAuth;
 use uuid::Uuid;
 
@@ -5,6 +6,7 @@ use domain::api_error::ApiError;
 
 use crate::repositories::user_repository_abstract::UserRepositoryAbstract;
 use crate::services::crypto_service_abstract::CryptoServiceAbstract;
+use crate::shared::app_error::AppError;
 use crate::usecases::interfaces::AbstractUseCase;
 
 pub struct AuthUserUseCase<'a, R, C>
@@ -31,38 +33,22 @@ impl<'a, R, C> AuthUserUseCase<'a, R, C>
     }
 }
 
-impl<'a, R, C> AbstractUseCase<Option<String>> for AuthUserUseCase<'a, R, C>
+impl<'a, R, C> AbstractUseCase<String> for AuthUserUseCase<'a, R, C>
     where
         R: UserRepositoryAbstract,
         C: CryptoServiceAbstract,
 {
-    async fn execute(&self) -> Result<Option<String>, ApiError> {
-        let user_id = match Uuid::parse_str(self.basic.user_id()) {
-            Ok(uuid) => uuid,
-            Err(e) => {
-                return Err(ApiError {
-                    code: 401,
-                    message: String::from("Invalid user id"),
-                    error: Box::new(e),
-                });
-            }
-        };
+    async fn execute(&self) -> Result<String, ApiError> {
+        let user_id = Uuid::parse_str(self.basic.user_id())
+            .map_err(|err| ApiError::new(StatusCode::BAD_REQUEST, "Invalid user id", err))?;
 
-        let password = match self.basic.password() {
-            Some(p) => p,
-            None => return Ok(None),
-        };
+        let password = self.basic.password().ok_or(ApiError::new(
+            StatusCode::BAD_REQUEST,
+            "Invalid user id",
+            AppError::EmptyPassword,
+        ))?;
 
-        let user = match self.repository.find(user_id).await {
-            Ok(user) => user,
-            Err(e) => {
-                return Err(ApiError {
-                    code: 401,
-                    message: String::from("User dosn't ecxist"),
-                    error: e,
-                });
-            }
-        };
+        let user = self.repository.find_by_id(user_id).await?;
 
         //todo perhaps the password should be hashed
         let valid = self
@@ -71,10 +57,13 @@ impl<'a, R, C> AbstractUseCase<Option<String>> for AuthUserUseCase<'a, R, C>
             .await?;
 
         if valid {
-            let token = self.hashing.generate_jwt(user.id).await?;
-            Ok(Some(token))
+            Ok(self.hashing.generate_jwt(user.id).await?)
         } else {
-            Ok(None)
+            Err(ApiError::new(
+                StatusCode::UNAUTHORIZED,
+                "Wrong password",
+                AppError::WrongPassword,
+            ))
         }
     }
 }

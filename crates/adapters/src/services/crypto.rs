@@ -1,5 +1,6 @@
+use actix_web::http::StatusCode;
 use actix_web::web::block;
-use bcrypt::{hash, verify};
+use bcrypt::hash;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, DecodingKey, encode, EncodingKey, Header, TokenData, Validation};
 use uuid::Uuid;
@@ -12,14 +13,15 @@ pub struct CryptoService {
     pub jwt_secret: String,
 }
 
-
 impl CryptoServiceAbstract for CryptoService {
     //TODO make async
     async fn hash_password(&self, password: String) -> Result<String, ApiError> {
-        hash(password, bcrypt::DEFAULT_COST).map_err(|err| ApiError {
-            code: 400,
-            message: String::from("Can't hash the password"),
-            error: Box::new(err),
+        hash(password, bcrypt::DEFAULT_COST).map_err(|err| {
+            ApiError::new(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Can't hasp password",
+                err,
+            )
         })
     }
 
@@ -41,17 +43,19 @@ impl CryptoServiceAbstract for CryptoService {
             let encoding_key = EncodingKey::from_secret(jwt_key.as_bytes());
             let now = Utc::now() + Duration::days(1); // Expires in 1 day
             let claims = Claims {
-                sub: user_id.into(),
+                sub: user_id,
                 exp: now.timestamp(),
             };
-            encode(&headers, &claims, &encoding_key).unwrap()
+            encode(&headers, &claims, &encoding_key).map_err(|err| {
+                ApiError::new(
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Can't encode the token",
+                    err,
+                )
+            })
         })
             .await
-            .map_err(|err| ApiError {
-                code: 400,
-                message: String::from("Can't creating jwt token").into(),
-                error: Box::new(err),
-            })
+            .map_err(|err| ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "Blocking error", err))?
     }
 
     async fn verify_jwt(&self, token: String) -> Result<TokenData<Claims>, ApiError> {
@@ -59,18 +63,15 @@ impl CryptoServiceAbstract for CryptoService {
         block(move || {
             let decoding_key = DecodingKey::from_secret(jwt_key.as_bytes());
             let validation = Validation::default();
-            decode::<Claims>(&token, &decoding_key, &validation).map_err(|err| ApiError {
-                code: 400,
-                message: String::from("Can't verifying jwt token"),
-                error: Box::new(err),
+            decode::<Claims>(&token, &decoding_key, &validation).map_err(|err| {
+                ApiError::new(
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Can't decode the token",
+                    err,
+                )
             })
         })
             .await
-            .map_err(|err| ApiError {
-                code: 400,
-                message: String::from("Can't verifying jwt token").into(),
-                error: Box::new(err),
-            })
-            .and_then(|result| result)
+            .map_err(|err| ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "Blocking error", err))?
     }
 }

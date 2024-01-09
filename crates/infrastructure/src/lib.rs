@@ -6,12 +6,11 @@ use actix_cors::Cors;
 use actix_web::{App, dev::Server, HttpServer, web};
 
 use adapters::api::shared::app_state::AppState;
+use adapters::services::crypto::CryptoService;
 use adapters::spi::chat::chat_repository::ChatRepository;
 use adapters::spi::user::user_repository::UserRepository;
 use adapters::spi::user_chat::user_chat_repository::UserChatRepository;
 use db::db_connection::DbConnection;
-
-use  adapters::services::crypto::CryptoService;
 
 pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::Error> {
     //let database_url = dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set");
@@ -49,8 +48,8 @@ pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::
             }))
             .configure(adapters::api::shared::routes::routes)
     })
-    .listen(listener)?
-    .run();
+        .listen(listener)?
+        .run();
 
     Ok(server)
 }

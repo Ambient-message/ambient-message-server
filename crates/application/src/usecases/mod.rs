@@ -1,3 +1,3 @@
-pub mod user;
 pub mod chat;
 pub mod interfaces;
+pub mod user;

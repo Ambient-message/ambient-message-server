@@ -23,18 +23,9 @@ impl<'r, R> CreateUserUseCase<'r, R>
 
 impl<'r, R> AbstractUseCase<()> for CreateUserUseCase<'r, R>
     where
-        R: UserRepositoryAbstract
+        R: UserRepositoryAbstract,
 {
     async fn execute(&self) -> Result<(), ApiError> {
-        let result = self.repository.save(&self.user).await;
-
-        match result {
-            Ok(_) => Ok(()),
-            Err(e) => Err(ApiError {
-                code: 400,
-                message: String::from("Cannot create user"),
-                error: e,
-            }),
-        }
+        self.repository.save(&self.user).await
     }
 }

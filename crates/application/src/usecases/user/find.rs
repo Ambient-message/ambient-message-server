@@ -6,7 +6,7 @@ use domain::user_entity::UserEntity;
 use crate::repositories::user_repository_abstract::UserRepositoryAbstract;
 use crate::usecases::interfaces::AbstractUseCase;
 
-pub struct FindUserUseCase<'r, R>
+pub struct FindUserByIDUseCase<'r, R>
     where
         R: UserRepositoryAbstract,
 {
@@ -14,29 +14,23 @@ pub struct FindUserUseCase<'r, R>
     repository: &'r R,
 }
 
-impl<'r, R> FindUserUseCase<'r, R>
+impl<'r, R> FindUserByIDUseCase<'r, R>
     where
         R: UserRepositoryAbstract,
 {
     pub fn new(user_id: Uuid, repository: &'r R) -> Self {
-        Self { user_id, repository }
+        Self {
+            user_id,
+            repository,
+        }
     }
 }
 
-impl<'r, R> AbstractUseCase<UserEntity> for FindUserUseCase<'r, R>
+impl<'r, R> AbstractUseCase<UserEntity> for FindUserByIDUseCase<'r, R>
     where
-        R: UserRepositoryAbstract
+        R: UserRepositoryAbstract,
 {
     async fn execute(&self) -> Result<UserEntity, ApiError> {
-        let result = self.repository.find(self.user_id).await;
-
-        match result {
-            Ok(user) => Ok(user),
-            Err(e) => Err(ApiError {
-                code: 400,
-                message: String::from("Cannot create user"),
-                error: e,
-            }),
-        }
+        self.repository.find_by_id(self.user_id).await
     }
 }

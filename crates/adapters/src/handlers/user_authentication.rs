@@ -8,7 +8,8 @@ use uuid::Uuid;
 
 use application::repositories::user_repository_abstract::UserRepositoryAbstract;
 use application::services::crypto_service_abstract::CryptoServiceAbstract;
-use domain::api_error::ApiError;
+use application::shared::app_error::AppError;
+
 use crate::api::shared::app_state::AppState;
 use crate::api::shared::error_presenter::ErrorReponse;
 use crate::services::crypto::CryptoService;
@@ -23,23 +24,21 @@ impl FromRequest for AuthenticatedUser {
     fn from_request(req: &HttpRequest, payload: &mut Payload) -> Self::Future {
         let bearer_result = BearerAuth::from_request(req, payload).into_inner();
         let repository_result = Data::<AppState>::from_request(req, payload).into_inner();
-            let crypto_service_result = Data::<CryptoService>::from_request(req, payload).into_inner();
+        let crypto_service_result = Data::<CryptoService>::from_request(req, payload).into_inner();
 
         match (bearer_result, repository_result, crypto_service_result) {
             (Ok(bearer), Ok(repository), Ok(crypto_service)) => {
                 let future = async move {
-                    let user_id  = crypto_service
+                    let user_id = crypto_service
                         .verify_jwt(bearer.token().to_string())
                         .await
                         .map(|data| data.claims.sub)
-                        .map_err(|err| {ErrorReponse::map_io_error(err)})?;
+                        .map_err(|err| ErrorReponse::map_io_error(err))?;
 
-                    repository.user_repository
-                        .find(user_id)
-                        .await
-                        .map_err(|e| {
-                            ErrorReponse::map_io_error(ApiError::new(401, "User dosh't ecxist".to_string(), e))
-                        })?;
+                    repository
+                        .user_repository
+                        .find_by_id(user_id)
+                        .await.map_err(|err| ErrorReponse::map_io_error(err))?;
 
                     Ok(AuthenticatedUser { 0: user_id })
                 };
@@ -48,9 +47,11 @@ impl FromRequest for AuthenticatedUser {
             }
             _ => {
                 let error = ready(Err(ErrorReponse::new(
-                    StatusCode::UNAUTHORIZED.into(),
-                    String::from("NOT AUTHORIZED"),
-                ).into()));
+                    StatusCode::UNAUTHORIZED,
+                    "NOT AUTHORIZED",
+                    AppError::NotAuthorized.into(),
+                )
+                    .into()));
                 Box::pin(error)
             }
         }

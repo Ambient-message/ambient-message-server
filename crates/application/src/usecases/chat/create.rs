@@ -24,7 +24,11 @@ impl<'r, CR, UCR> CreateChatUseCase<'r, CR, UCR>
         UCR: UserChatRepositoryAbstract,
 {
     pub fn new(user_id: Uuid, chat_repository: &'r CR, user_chat_repository: &'r UCR) -> Self {
-        Self { user_id, chat_repository, user_chat_repository }
+        Self {
+            user_id,
+            chat_repository,
+            user_chat_repository,
+        }
     }
 }
 
@@ -35,28 +39,10 @@ impl<'r, CR, UCR> AbstractUseCase<()> for CreateChatUseCase<'r, CR, UCR>
 {
     async fn execute(&self) -> Result<(), ApiError> {
         let chat = ChatEntity::new();
-        let result = self.chat_repository.save(chat);
+        let chat = self.chat_repository.save(chat)?;
 
-        match result {
-            Ok(chat) => {
-                let user_chat = UserChatEntity::new(self.user_id, chat.id);
+        let user_chat = UserChatEntity::new(self.user_id, chat.id);
 
-                let result = self.user_chat_repository.save(&user_chat);
-
-                match result {
-                    Ok(_) => Ok(()),
-                    Err(e) => Err(ApiError {
-                        code: 400,
-                        message: String::from("Cannot create user chat"),
-                        error: e,
-                    }),
-                }
-            }
-            Err(e) => Err(ApiError {
-                code: 400,
-                message: String::from("Cannot create chat"),
-                error: e,
-            }),
-        }
+        self.user_chat_repository.save(&user_chat)
     }
 }

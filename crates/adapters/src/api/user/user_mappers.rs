@@ -4,7 +4,9 @@ use domain::user_entity::UserEntity;
 use crate::api::user::user_payloads::UserPayload;
 use crate::api::user::user_presenters::UserPresenter;
 
-pub struct UserMapper {}
+pub struct UserMapper {
+
+}
 
 impl ApiMapper<UserEntity, UserPresenter, UserPayload> for UserMapper {
     fn to_api(entity: UserEntity) -> UserPresenter {
