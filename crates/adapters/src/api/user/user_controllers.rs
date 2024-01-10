@@ -1,11 +1,14 @@
 use actix_web::{HttpResponse, post, web};
+use actix_web::http::StatusCode;
 use actix_web_httpauth::extractors::basic::BasicAuth;
 
 use application::mappers::api_mapper::ApiMapper;
+use application::shared::app_error::AppError;
 use application::usecases::interfaces::AbstractUseCase;
 use application::usecases::user::auth::AuthUserUseCase;
 use application::usecases::user::create::CreateUserUseCase;
 use application::usecases::user::find::FindUserByIDUseCase;
+use domain::user_entity::UserEntity;
 
 use crate::api::shared::app_state::AppState;
 use crate::api::shared::error_presenter::ErrorReponse;
@@ -23,7 +26,14 @@ async fn create_user(
     data: web::Data<AppState>,
     info: web::Json<UserPayload>,
 ) -> Result<HttpResponse, ErrorReponse> {
-    let user = UserMapper::to_entity(info.0);
+    let user_mapper = UserMapper{user_repository: &data.user_repository};
+
+    if let Some(_) = user_mapper.to_entity(info.0).await
+        .map_err(ErrorReponse::map_io_error)? {
+        return Err(ErrorReponse::new(StatusCode::BAD_REQUEST, "User already exist", AppError::UserWithThisUsernameAlreadyExist));
+    }
+
+    let user = UserEntity::new(&info.username, &info.password);
 
     println!("{}", user.username);
 

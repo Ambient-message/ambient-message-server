@@ -1,7 +1,7 @@
-pub trait ApiMapper<Entity, Presenter, Payload> {
+pub trait ApiMapper<Entity, Presenter, Payload, Error> {
     // Map an Entity to a Presenter
     fn to_api(entity: Entity) -> Presenter;
 
     // Map a Payload to an Entity
-    fn to_entity(payload: Payload) -> Entity;
+    async fn to_entity(&self, payload: Payload) -> Result<Option<Entity>, Error>;
 }

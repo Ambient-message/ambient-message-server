@@ -52,7 +52,7 @@ impl<'a, R, C> AbstractUseCase<String> for AuthUserUseCase<'a, R, C>
             .ok_or(ApiError::new(
                 StatusCode::BAD_REQUEST,
                 "User with this id doesn't not exist",
-                AppError::UserNotFound,
+                AppError::UserNotExist,
             ))?;
 
         //todo perhaps the password should be hashed

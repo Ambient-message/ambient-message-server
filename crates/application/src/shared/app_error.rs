@@ -6,8 +6,8 @@ pub enum AppError {
     EmptyPassword,
     #[error("Wrong password")]
     WrongPassword,
-    #[error("User not found")]
-    UserNotFound,
+    #[error("User not exist")]
+    UserNotExist,
     #[error("User not authorized")]
     NotAuthorized,
     #[error("User With This Username Already Exist")]

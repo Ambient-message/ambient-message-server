@@ -49,11 +49,11 @@ impl ErrorReponse {
         }
     }
 
-    pub fn new(status_code: StatusCode, message: impl Into<String>, error: Error) -> Self {
+    pub fn new(status_code: StatusCode, message: impl Into<String>, error: impl Into<Error>) -> Self {
         Self {
             status_code,
             message: message.into(),
-            error,
+            error: error.into(),
         }
     }
 }
