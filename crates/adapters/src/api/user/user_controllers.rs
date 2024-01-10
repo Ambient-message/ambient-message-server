@@ -24,15 +24,8 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
 async fn create_user(
     data: web::Data<AppState>,
     info: web::Json<UserPayload>,
-) -> Result<HttpResponse, ErrorReponse> {
-    let user_mapper = UserMapper{user_repository: &data.user_repository};
-
-    if let Some(_) = user_mapper.to_entity(info.0).await
-        .map_err(ErrorReponse::map_io_error)? {
-        return Err(ErrorReponse::new(StatusCode::BAD_REQUEST, "User already exist", AppError::UserWithThisUsernameAlreadyExist));
-    }
-
-    let user = UserEntity::new(&info.username, &info.password);
+) -> Result<HttpResponse, ErrorReponse> {;
+    let user = UserMapper::to_entity(info.0);
 
     println!("{}", user.username);
 

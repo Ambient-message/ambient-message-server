@@ -39,23 +39,21 @@ impl<'a, R, C> AbstractUseCase<String> for AuthUserUseCase<'a, R, C>
         C: CryptoServiceAbstract,
 {
     async fn execute(&self) -> Result<String, ApiError> {
-        let user_id = Uuid::parse_str(self.basic.user_id())
-            .map_err(|err| ApiError::new(StatusCode::BAD_REQUEST, "Invalid user id", err))?;
+        let username = self.basic.user_id();
 
         let password = self.basic.password().ok_or(ApiError::new(
             StatusCode::BAD_REQUEST,
-            "Invalid user id",
+            "Empty user password",
             AppError::EmptyPassword,
         ))?;
 
-        let user = self.repository.find_by_id(user_id).await?
+        let user = self.repository.find_by_username(username).await?
             .ok_or(ApiError::new(
                 StatusCode::BAD_REQUEST,
-                "User with this id doesn't not exist",
+                "User with this username doesn't not exist",
                 AppError::UserNotExist,
             ))?;
 
-        //todo perhaps the password should be hashed
         let valid = self
             .hashing
             .verify_password(password, user.password.as_str())

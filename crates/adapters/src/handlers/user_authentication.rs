@@ -49,7 +49,7 @@ impl FromRequest for AuthenticatedUser {
                 let error = ready(Err(ErrorReponse::new(
                     StatusCode::UNAUTHORIZED,
                     "NOT AUTHORIZED",
-                    AppError::NotAuthorized.into(),
+                    AppError::NotAuthorized,
                 )
                     .into()));
                 Box::pin(error)

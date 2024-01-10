@@ -1,6 +1,6 @@
 use actix_web::http::StatusCode;
 use actix_web::web::block;
-use bcrypt::hash;
+use bcrypt::{hash, verify};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, DecodingKey, encode, EncodingKey, Header, TokenData, Validation};
 use uuid::Uuid;
@@ -27,12 +27,11 @@ impl CryptoServiceAbstract for CryptoService {
 
     //TODO make async
     async fn verify_password(&self, password: &str, password_hash: &str) -> Result<bool, ApiError> {
-        Ok(password == password_hash)
-        // verify(password, password_hash).map_err(|err| ApiError {
-        //     code: 400,
-        //     message: String::from("Verifying error"),
-        //     error: Box::new(err),
-        // })
+        verify(password, password_hash).map_err(|err| ApiError::new(
+            StatusCode::BAD_REQUEST,
+            String::from("Verifying error"),
+            err,
+        ))
     }
 
     //TODO make async like this
