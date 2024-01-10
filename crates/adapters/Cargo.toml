@@ -9,7 +9,7 @@ domain = { path = "../domain" }
 application = { path = "../application" }
 db = { path = "../db" }
 
-actix-web = "4.4.0"
+actix-web = { version = "4.4.1" }
 diesel = { version = "2.1.4", features = ["postgres", "r2d2", "uuid"] }
 diesel_migrations = "2.1.0"
 dotenv = "0.15"
@@ -17,3 +17,9 @@ uuid = { version = "1.6.1", features = ["serde"] }
 thiserror = "1.0.51"
 derive_more = { version = "0.99.17", features = ["display"] }
 serde = { version = "1.0.193", features = ["derive"] }
+actix-web-httpauth = "0.8.1"
+futures = "0.3.30"
+bcrypt = "0.15.0"
+jsonwebtoken = "9.2.0"
+chrono = "0.4.31"
+anyhow = "1.0.79"

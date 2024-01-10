@@ -18,4 +18,12 @@ impl UserEntity {
             password: password.into(),
         }
     }
+
+    pub fn change_password(&self, password: impl Into<String>) -> Self {
+        Self {
+            id: self.id,
+            username: self.username.clone(),
+            password: password.into(),
+        }
+    }
 }
