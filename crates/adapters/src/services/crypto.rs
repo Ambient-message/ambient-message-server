@@ -15,7 +15,7 @@ pub struct CryptoService {
 
 impl CryptoServiceAbstract for CryptoService {
     //TODO make async
-    async fn hash_password(&self, password: String) -> Result<String, ApiError> {
+    async fn hash_password(&self, password: &String) -> Result<String, ApiError> {
         hash(password, bcrypt::DEFAULT_COST).map_err(|err| {
             ApiError::new(
                 StatusCode::INTERNAL_SERVER_ERROR,

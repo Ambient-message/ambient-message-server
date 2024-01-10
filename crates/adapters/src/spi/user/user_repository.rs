@@ -7,8 +7,10 @@ use uuid::Uuid;
 
 use application::mappers::db_mapper::DbMapper;
 use application::repositories::user_repository_abstract::UserRepositoryAbstract;
+use application::services::crypto_service_abstract::CryptoServiceAbstract;
 use application::shared::app_error::AppError;
 use db::db_connection::DbConnection;
+use db::models::UserModel;
 use db::schema::users::dsl::users;
 use domain::api_error::ApiError;
 use domain::user_entity::UserEntity;
@@ -85,7 +87,7 @@ impl UserRepositoryAbstract for UserRepository {
 
         let result = db::schema::users::table
             .filter(db::schema::users::username.eq(username.into()))
-            .first(&mut conn)
+            .first::<UserModel>(&mut conn)
             .optional()
             .map_err(|err| {
                 ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "Can't find user", err)
@@ -93,5 +95,11 @@ impl UserRepositoryAbstract for UserRepository {
             .map(UserDbMapper::to_entity);
 
         Ok(result)
+    }
+
+    async fn hash_password<C>(&self, user: &UserEntity, crypto: &C) -> Result<UserEntity, ApiError>
+    where C: CryptoServiceAbstract{
+        let hashed_password = crypto.hash_password(&user.password).await?;
+        Ok(user.change_password(hashed_password))
     }
 }

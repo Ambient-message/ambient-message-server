@@ -15,7 +15,6 @@ use crate::api::shared::error_presenter::ErrorReponse;
 use crate::api::user::user_mappers::UserMapper;
 use crate::api::user::user_payloads::UserPayload;
 use crate::handlers::user_authentication::AuthenticatedUser;
-use crate::services::crypto::CryptoService;
 
 pub fn routes(cfg: &mut web::ServiceConfig) {
     cfg.service(create_user).service(user_profile).service(auth);
@@ -37,7 +36,7 @@ async fn create_user(
 
     println!("{}", user.username);
 
-    let create_user_usecase = CreateUserUseCase::new(user, &data.user_repository);
+    let create_user_usecase = CreateUserUseCase::new(user, &data.user_repository, &data.crypto_services);
     let user = create_user_usecase.execute().await;
 
     user.map_err(ErrorReponse::map_io_error)
@@ -60,10 +59,9 @@ async fn user_profile(
 async fn auth(
     basic: BasicAuth,
     data: web::Data<AppState>,
-    hashing: web::Data<CryptoService>,
 ) -> Result<HttpResponse, ErrorReponse> {
     let auth_user_usecase
-        = AuthUserUseCase::new(basic, &data.user_repository, hashing.get_ref());
+        = AuthUserUseCase::new(basic, &data.user_repository, &data.crypto_services);
     let token = auth_user_usecase
         .execute()
         .await

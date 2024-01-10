@@ -31,6 +31,10 @@ pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::
         user_chat_repository: UserChatRepository {
             db_connection: db_connection.clone(),
         },
+        crypto_services: CryptoService {
+            //todo get from env
+            jwt_secret: String::from("Bebra").into(),
+        }
     });
 
     let server = HttpServer::new(move || {
@@ -42,10 +46,6 @@ pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::
                     .allowed_headers(vec!["Content-Type"]),
             )
             .app_data(data.clone())
-            //todo get from env
-            .app_data(web::Data::new(CryptoService {
-                jwt_secret: String::from("Bebra").into(),
-            }))
             .configure(adapters::api::shared::routes::routes)
     })
         .listen(listener)?
