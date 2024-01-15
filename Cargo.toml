@@ -10,7 +10,7 @@ members = [
     "crates/db",
     "crates/adapters",
     "crates/infrastructure",
-    "crates/mongodb",
+    "crates/mongodb_db",
 ]
 
 [dependencies]

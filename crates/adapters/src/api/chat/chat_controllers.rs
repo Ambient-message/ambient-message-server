@@ -14,7 +14,6 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
 }
 
 #[post("/chat/create")]
-//todo receive user id by token
 async fn create_chat(
     user: AuthenticatedUser,
     data: web::Data<AppState>,
@@ -22,9 +21,9 @@ async fn create_chat(
 ) -> Result<HttpResponse, ErrorReponse> {
     let create_chat_usecase =
         CreateChatUseCase::new(user.0, info.0, &data.chat_repository, &data.user_chat_repository);
-    let user = create_chat_usecase.execute().await;
+    let res = create_chat_usecase.execute().await;
 
-    user.map_err(ErrorReponse::map_io_error)
+    res.map_err(ErrorReponse::map_io_error)
         .map(|_| HttpResponse::Ok().finish())
 }
 

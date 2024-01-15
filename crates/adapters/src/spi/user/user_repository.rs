@@ -16,7 +16,7 @@ use db::schema::users::dsl::users;
 use domain::api_error::ApiError;
 use domain::user_entity::UserEntity;
 
-use crate::spi::user::chat_db_mapper::UserDbMapper;
+use crate::spi::user::user_db_mapper::UserDbMapper;
 
 pub struct UserRepository {
     pub db_connection: Arc<DbConnection>,

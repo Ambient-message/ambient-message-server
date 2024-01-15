@@ -7,7 +7,7 @@ pub struct MongodbConnection {
 
 impl MongodbConnection {
     pub async fn new(connection_string: &str) -> Self {
-        let client_options = ClientOptions::parse("mongodb://localhost:27017").await.unwrap();
+        let client_options = ClientOptions::parse(connection_string).await.unwrap();
         let client = Client::with_options(client_options).unwrap();
 
         Self { client }

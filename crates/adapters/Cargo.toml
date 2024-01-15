@@ -8,6 +8,7 @@ publish = false
 domain = { path = "../domain" }
 application = { path = "../application" }
 db = { path = "../db" }
+mongodb_db = { path = "../mongodb_db" }
 
 actix-web = { version = "4.4.1" }
 diesel = { version = "2.1.4", features = ["postgres", "r2d2", "uuid"] }
@@ -23,3 +24,5 @@ bcrypt = "0.15.0"
 jsonwebtoken = "9.2.0"
 chrono = "0.4.31"
 anyhow = "1.0.79"
+mongodb = {version = "2.8.0"}
+log = "0.4.20"

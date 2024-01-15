@@ -2,15 +2,15 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use bson::serde_helpers::uuid_1_as_binary;
 
-#[derive(Debug, Serialize, Deserialize)]
-struct MessageModel {
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MessageModel {
     #[serde(with = "uuid_1_as_binary")]
-    _id: Uuid,
+    pub _id: Uuid,
     #[serde(with = "uuid_1_as_binary")]
-    sender_id: Uuid,
+    pub sender_id: Uuid,
     #[serde(with = "uuid_1_as_binary")]
-    chat_id: Uuid,
-    text: String,
+    pub chat_id: Uuid,
+    pub text: String,
 }
 
 impl MessageModel {
