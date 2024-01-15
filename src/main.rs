@@ -15,7 +15,7 @@ async fn main() -> std::io::Result<()> {
 
     dotenv::from_filename(environment_file).ok();
 
-    let address = String::from("127.0.0.1:8888");
+    let address = String::from("localhost:8888");
 
     let listener = TcpListener::bind(address.clone()).expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();

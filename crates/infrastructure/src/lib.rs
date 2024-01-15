@@ -43,7 +43,7 @@ pub fn server(listener: TcpListener, app_name: &str) -> Result<Server, std::io::
                 Cors::default()
                     .allow_any_origin()
                     .allowed_methods(vec!["GET", "POST", "OPTIONS"])
-                    .allowed_headers(vec!["Content-Type"]),
+                    .allowed_headers(vec!["Content-Type", "Authorization"]),
             )
             .app_data(data.clone())
             .configure(adapters::api::shared::routes::routes)

@@ -24,12 +24,12 @@ impl FromRequest for AuthenticatedUser {
     fn from_request(req: &HttpRequest, payload: &mut Payload) -> Self::Future {
         let bearer_result = BearerAuth::from_request(req, payload).into_inner();
         let repository_result = Data::<AppState>::from_request(req, payload).into_inner();
-        let crypto_service_result = Data::<CryptoService>::from_request(req, payload).into_inner();
 
-        match (bearer_result, repository_result, crypto_service_result) {
-            (Ok(bearer), Ok(repository), Ok(crypto_service)) => {
+        match (bearer_result, repository_result) {
+            (Ok(bearer), Ok(repository)) => {
                 let future = async move {
-                    let user_id = crypto_service
+                    let user_id = repository.
+                        crypto_services
                         .verify_jwt(bearer.token().to_string())
                         .await
                         .map(|data| data.claims.sub)

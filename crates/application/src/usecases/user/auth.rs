@@ -33,12 +33,12 @@ impl<'a, R, C> AuthUserUseCase<'a, R, C>
     }
 }
 
-impl<'a, R, C> AbstractUseCase<String> for AuthUserUseCase<'a, R, C>
+impl<'a, R, C> AbstractUseCase<(Uuid, String)> for AuthUserUseCase<'a, R, C>
     where
         R: UserRepositoryAbstract,
         C: CryptoServiceAbstract,
 {
-    async fn execute(&self) -> Result<String, ApiError> {
+    async fn execute(&self) -> Result<(Uuid, String), ApiError> {
         let username = self.basic.user_id();
 
         let password = self.basic.password().ok_or(ApiError::new(
@@ -60,7 +60,7 @@ impl<'a, R, C> AbstractUseCase<String> for AuthUserUseCase<'a, R, C>
             .await?;
 
         if valid {
-            Ok(self.hashing.generate_jwt(user.id).await?)
+            Ok((user.id, self.hashing.generate_jwt(user.id).await?))
         } else {
             Err(ApiError::new(
                 StatusCode::UNAUTHORIZED,

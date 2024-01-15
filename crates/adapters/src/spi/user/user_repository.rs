@@ -2,13 +2,14 @@ use std::sync::Arc;
 
 use actix_web::http::StatusCode;
 use anyhow::Result;
+use diesel::associations::HasTable;
 use diesel::prelude::*;
+use futures::stream::iter;
 use uuid::Uuid;
 
 use application::mappers::db_mapper::DbMapper;
 use application::repositories::user_repository_abstract::UserRepositoryAbstract;
 use application::services::crypto_service_abstract::CryptoServiceAbstract;
-use application::shared::app_error::AppError;
 use db::db_connection::DbConnection;
 use db::models::UserModel;
 use db::schema::users::dsl::users;
@@ -101,5 +102,33 @@ impl UserRepositoryAbstract for UserRepository {
     where C: CryptoServiceAbstract{
         let hashed_password = crypto.hash_password(&user.password).await?;
         Ok(user.change_password(hashed_password))
+    }
+
+    async fn get_all_users(&self) -> std::result::Result<Vec<UserEntity>, ApiError> {
+        let mut conn = self
+            .db_connection
+            .db_pool
+            .get()
+            .map_err(|err| {
+                ApiError::new(
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Couldn't connect to database",
+                    err,
+                )
+            })?;
+
+        let user_list = db::schema::users::dsl::users
+            .load::<UserModel>(&mut conn)
+            .map_err(|err| {
+                ApiError::new(
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Couldn't connect to database",
+                    err,
+                )})?
+            .iter()
+            .map(|model| UserDbMapper::to_entity(model.clone()))
+            .collect();
+
+        Ok(user_list)
     }
 }
