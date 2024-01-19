@@ -8,9 +8,7 @@ pub struct UserEntity {
 }
 
 impl UserEntity {
-    pub fn new<N>(name: N, password: N) -> Self
-        where
-            N: Into<String>,
+    pub fn new(name: impl Into<String>, password: impl Into<String>) -> Self
     {
         Self {
             id: Uuid::new_v4(),

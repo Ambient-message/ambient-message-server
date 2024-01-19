@@ -22,18 +22,28 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
 
 #[post("/reg")]
 async fn create_user(
+    basic: BasicAuth,
     data: web::Data<AppState>,
-    info: web::Json<UserPayload>,
-) -> Result<HttpResponse, ErrorReponse> {;
-    let user = UserMapper::to_entity(info.0);
+) -> Result<HttpResponse, ErrorReponse> {
+    println!("creating user {}", basic.user_id());
 
-    println!("creating user {}", user.username);
+    let create_user_usecase = CreateUserUseCase::new(basic.clone(), &data.user_repository, &data.crypto_services);
+    create_user_usecase.execute().await.map_err(ErrorReponse::map_io_error)?;
 
-    let create_user_usecase = CreateUserUseCase::new(user, &data.user_repository, &data.crypto_services);
-    let user = create_user_usecase.execute().await;
+    let auth_user_usecase
+        = AuthUserUseCase::new(basic, &data.user_repository, &data.crypto_services);
 
-    user.map_err(ErrorReponse::map_io_error)
-        .map(|_| HttpResponse::Ok().finish())
+    let token = auth_user_usecase
+        .execute()
+        .await
+        .map_err(ErrorReponse::map_io_error)?;
+
+    let user_info = UserInfo {
+        id: token.0.to_string(),
+        token: token.1,
+    };
+
+    Ok(HttpResponse::Ok().json(user_info))
 }
 
 #[post("/user/profile")]

@@ -98,12 +98,6 @@ impl UserRepositoryAbstract for UserRepository {
         Ok(result)
     }
 
-    async fn hash_password<C>(&self, user: &UserEntity, crypto: &C) -> Result<UserEntity, ApiError>
-    where C: CryptoServiceAbstract{
-        let hashed_password = crypto.hash_password(&user.password).await?;
-        Ok(user.change_password(hashed_password))
-    }
-
     async fn get_all_users(&self) -> std::result::Result<Vec<UserEntity>, ApiError> {
         let mut conn = self
             .db_connection
